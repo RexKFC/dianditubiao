@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图表演示</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #292929;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+    }
+
+    .page {
+      width: 375px;
+      height: 812px;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .forecast {
+      position: absolute;
+      top: 285px;
+      left: 50%;
+      width: 303px;
+      transform: translateX(-50%);
+    }
+
+    .forecast-panel {
+      position: relative;
+      width: 303px;
+      height: 140px;
+      padding: 0;
+      background: #f2f2f5;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+    }
+
+    .title {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      margin: 0;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    .calendar {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 303px;
+      height: 140px;
+      padding: 0;
+      background: transparent;
+    }
+
+    .calendar-inner {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      height: 100%;
+      padding-top: 48px;
+    }
+
+    .card {
+      position: relative;
+      width: 85px;
+      height: 76px;
+      overflow: visible;
+      transform-style: preserve-3d;
+      perspective: 900px;
+      --flip-half-duration: 150ms;
+    }
+
+    .card-shadow {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      width: 105px;
+      height: 96px;
+      background: url("./切图/阴影.png?v=1784355470") no-repeat top left / 100% 100%;
+      transform: translateX(-50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .card-value {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 85px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #eb5f94;
+      font-weight: 700;
+      letter-spacing: -2px;
+      z-index: 2;
+    }
+
+    .card-value.number {
+      font-size: 44px;
+    }
+
+    .card-value.week {
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .suffix {
+      margin-left: 2px;
+      align-self: flex-end;
+      padding-bottom: 25px;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .value-main {
+      display: inline-block;
+    }
+
+    .card-top,
+    .card-bottom {
+      position: absolute;
+      left: 0;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      transform-origin: top left;
+      transform: scale(0.3333333);
+    }
+
+    .card-top {
+      top: 0;
+      width: 255px;
+      height: 108px;
+      background-image: url("./切图/上半页.png?v=1784283355");
+    }
+
+    .card-bottom {
+      top: 36px;
+      width: 255px;
+      height: 120px;
+      background-image: url("./切图/下半页.png?v=1784283434");
+    }
+
+    .hinge-left,
+    .hinge-right {
+      position: absolute;
+      top: 29px;
+      width: 11px;
+      height: 45px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-image: url("./切图/金属轴.png?v=1784279373");
+      transform-origin: top left;
+      z-index: 3;
+    }
+
+    .hinge-left {
+      left: 0;
+      transform: scale(0.3333333);
+    }
+
+    .hinge-right {
+      right: 2px;
+      transform-origin: top right;
+      transform: scale(-0.3333333, 0.3333333);
+    }
+
+    .card-seam {
+      position: absolute;
+      left: 0;
+      top: 35.5px;
+      width: 85px;
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .flip-top,
+    .flip-bottom {
+      position: absolute;
+      left: 0;
+      width: 85px;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 4;
+      backface-visibility: hidden;
+    }
+
+    .flip-top {
+      top: 0;
+      height: 36px;
+      transform-origin: center bottom;
+    }
+
+    .flip-bottom {
+      top: 36px;
+      height: 40px;
+      transform-origin: center top;
+      transform: rotateX(90deg);
+    }
+
+    .flip-top .card-top,
+    .flip-bottom .card-bottom {
+      z-index: 0;
+    }
+
+    .flip-bottom .card-bottom {
+      top: 0;
+    }
+
+    .flip-top::after,
+    .flip-bottom::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .flip-top::after {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.18) 100%);
+      transform-origin: center bottom;
+    }
+
+    .flip-bottom::after {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(255, 255, 255, 0.02) 100%);
+      transform-origin: center top;
+    }
+
+    .flip-top .card-value,
+    .flip-bottom .card-value {
+      z-index: 1;
+    }
+
+    .flip-bottom .card-value {
+      top: -36px;
+    }
+
+    .card.is-flipping .flip-top,
+    .card.is-flipping .flip-bottom {
+      opacity: 1;
+    }
+
+    .card.is-flipping .flip-top {
+      animation: flipTop var(--flip-half-duration) cubic-bezier(0.38, 0.02, 0.7, 0.28) forwards;
+    }
+
+    .card.is-flipping .flip-bottom {
+      animation: flipBottom var(--flip-half-duration) cubic-bezier(0.2, 0.75, 0.28, 1) var(--flip-half-duration) forwards;
+    }
+
+    .card.is-flipping .flip-top::after {
+      animation: topShade var(--flip-half-duration) ease-out forwards;
+    }
+
+    .card.is-flipping .flip-bottom::after {
+      animation: bottomShade var(--flip-half-duration) ease-out var(--flip-half-duration) forwards;
+    }
+
+    .card.is-flipping .card-shadow {
+      animation: cardShadowPulse calc(var(--flip-half-duration) * 2) ease-out forwards;
+    }
+
+    .play-button {
+      position: absolute;
+      left: 50%;
+      bottom: 36px;
+      width: 168px;
+      height: 48px;
+      border: 0;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ff7bac 0%, #eb5f94 100%);
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 12px 24px rgba(235, 95, 148, 0.25);
+      transform: translateX(-50%);
+      cursor: pointer;
+    }
+
+    .play-button:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    @keyframes flipTop {
+      from {
+        transform: rotateX(0deg) translateY(0);
+      }
+
+      to {
+        transform: rotateX(-102deg) translateY(1px);
+      }
+    }
+
+    @keyframes flipBottom {
+      from {
+        transform: rotateX(104deg) translateY(-1px);
+      }
+
+      to {
+        transform: rotateX(0deg) translateY(0);
+      }
+    }
+
+    @keyframes topShade {
+      from {
+        opacity: 0.18;
+      }
+
+      to {
+        opacity: 0.42;
+      }
+    }
+
+    @keyframes bottomShade {
+      from {
+        opacity: 0.45;
+      }
+
+      to {
+        opacity: 0.08;
+      }
+    }
+
+    @keyframes cardShadowPulse {
+      0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.92;
+      }
+
+      40% {
+        transform: translateX(-50%) scale(1.03, 1.01);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.92;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="forecast">
+      <div class="forecast-panel">
+        <h1 class="title">下次月经预测</h1>
+        <div class="calendar">
+          <div class="calendar-inner">
+            <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="500" data-type="number" data-suffix="月">
+              <span class="card-shadow"></span>
+              <span class="card-top"></span>
+              <span class="card-bottom"></span>
+              <span class="card-seam"></span>
+              <span class="hinge-left"></span>
+              <span class="hinge-right"></span>
+              <div class="card-value card-display number">
+                <span class="value-main">12</span>
+                <span class="suffix">月</span>
+              </div>
+              <div class="flip-top">
+                <span class="card-top"></span>
+                <div class="card-value number">
+                  <span class="value-main">12</span>
+                  <span class="suffix">月</span>
+                </div>
+              </div>
+              <div class="flip-bottom">
+                <span class="card-bottom"></span>
+                <div class="card-value number">
+                  <span class="value-main">01</span>
+                  <span class="suffix">月</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="5" data-type="number" data-suffix="日">
+              <span class="card-shadow"></span>
+              <span class="card-top"></span>
+              <span class="card-bottom"></span>
+              <span class="card-seam"></span>
+              <span class="hinge-left"></span>
+              <span class="hinge-right"></span>
+              <div class="card-value card-display number">
+                <span class="value-main">22</span>
+                <span class="suffix">日</span>
+              </div>
+              <div class="flip-top">
+                <span class="card-top"></span>
+                <div class="card-value number">
+                  <span class="value-main">22</span>
+                  <span class="suffix">日</span>
+                </div>
+              </div>
+              <div class="flip-bottom">
+                <span class="card-bottom"></span>
+                <div class="card-value number">
+                  <span class="value-main">23</span>
+                  <span class="suffix">日</span>
+                </div>
+              </div>
+            </div>
+            <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="2" data-type="week">
+              <span class="card-shadow"></span>
+              <span class="card-top"></span>
+              <span class="card-bottom"></span>
+              <span class="card-seam"></span>
+              <span class="hinge-left"></span>
+              <span class="hinge-right"></span>
+              <div class="card-value card-display week">
+                <span class="value-main">周日</span>
+              </div>
+              <div class="flip-top">
+                <span class="card-top"></span>
+                <div class="card-value week">
+                  <span class="value-main">周日</span>
+                </div>
+              </div>
+              <div class="flip-bottom">
+                <span class="card-bottom"></span>
+                <div class="card-value week">
+                  <span class="value-main">周一</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <button class="play-button" type="button">播放</button>
+  </div>
+  <script>
+    const cards = Array.from(document.querySelectorAll(".card"));
+    const playButton = document.querySelector(".play-button");
+
+    function setCardText(card, value) {
+      const displayMain = card.querySelector(".card-display .value-main");
+      displayMain.textContent = value;
+    }
+
+    function prepareFlip(card, currentValue, nextValue) {
+      card.querySelector(".flip-top .value-main").textContent = currentValue;
+      card.querySelector(".flip-bottom .value-main").textContent = nextValue;
+    }
+
+    function flipCard(card, duration = 300) {
+      const sequence = JSON.parse(card.dataset.sequence);
+      const currentIndex = Number(card.dataset.index || 0);
+      const nextIndex = (currentIndex + 1) % sequence.length;
+      const currentValue = sequence[currentIndex];
+      const nextValue = sequence[nextIndex];
+
+      prepareFlip(card, currentValue, nextValue);
+      setCardText(card, nextValue);
+      card.style.setProperty("--flip-half-duration", `${duration / 2}ms`);
+      card.classList.remove("is-flipping");
+      void card.offsetWidth;
+      card.classList.add("is-flipping");
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          card.dataset.index = String(nextIndex);
+          card.classList.remove("is-flipping");
+          resolve();
+        }, duration);
+      });
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function runCardSteps(card, steps, totalDuration) {
+      if (steps <= 0) {
+        await wait(totalDuration);
+        return;
+      }
+
+      const customDuration = Number(card.dataset.duration || 0);
+      const perFlipDuration = customDuration || Math.max(120, Math.round(totalDuration / steps));
+
+      for (let i = 0; i < steps; i += 1) {
+        await flipCard(card, perFlipDuration);
+      }
+    }
+
+    async function playFlip() {
+      playButton.disabled = true;
+      const totalDuration = 1200;
+      await Promise.all(
+        cards.map((card) =>
+          runCardSteps(card, Number(card.dataset.steps || 1), totalDuration)
+        )
+      );
+      playButton.disabled = false;
+    }
+
+    playButton.addEventListener("click", () => {
+      if (!playButton.disabled) {
+        playFlip();
+      }
+    });
+  </script>
+</body>
+</html>
