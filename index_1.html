@@ -96,6 +96,7 @@
       width: 100%;
       height: 100%;
       padding-top: 48px;
+      background: #fafafa;
     }
 
     .card {
@@ -393,7 +394,7 @@
       width: 304px;
       height: 152px;
       padding: 13px 12px 14px;
-      background: #f2f2f5;
+      background: #fafafa;
       border-radius: 12px;
     }
 
@@ -563,7 +564,7 @@
       width: 304px;
       height: 152px;
       padding: 16px 8px 14px 8px;
-      background: #f2f2f5;
+      background: #fafafa;
       border-radius: 12px;
       transition: background-color 220ms ease;
     }
@@ -722,7 +723,7 @@
     }
 
     .bar-panel.is-shell {
-      background: #f2f2f5;
+      background: #fafafa;
     }
 
     .bar-panel.is-shell .bar-title {
@@ -769,7 +770,7 @@
       width: 304px;
       height: 152px;
       padding: 0 16px 8px;
-      background: #f2f2f5;
+      background: #fafafa;
       border-radius: 12px;
     }
 
@@ -840,7 +841,7 @@
       line-height: 1;
       transform: translateY(-3px);
       transition-property: opacity;
-      transition-duration: 300ms;
+      transition-duration: 160ms;
     }
 
     .walk-bar {
@@ -871,19 +872,27 @@
     }
 
     .walk-item:nth-of-type(2) {
-      --walk-delay: 100ms;
+      --walk-delay: 200ms;
     }
 
     .walk-item:nth-of-type(3) {
-      --walk-delay: 200ms;
+      --walk-delay: 400ms;
     }
 
     .walk-item .walk-bar {
       transition-delay: calc(var(--walk-delay) + 40ms);
     }
 
-    .walk-item .walk-value {
-      transition-delay: calc(var(--walk-delay) + 440ms);
+    .walk-item:nth-of-type(1) .walk-value {
+      transition-delay: 460ms;
+    }
+
+    .walk-item:nth-of-type(2) .walk-value {
+      transition-delay: 660ms;
+    }
+
+    .walk-item:nth-of-type(3) .walk-value {
+      transition-delay: 860ms;
     }
 
     .walk-item .walk-label {
@@ -912,7 +921,7 @@
     }
 
     .walk-panel.is-shell {
-      background: #f2f2f5;
+      background: #fafafa;
     }
 
     .walk-panel.is-shell .walk-title,
@@ -1125,32 +1134,32 @@
           <div class="signal-grid">
             <div class="signal-item is-dim" data-signal="stable">
               <div class="signal-light">
-                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
-                <span class="signal-light-on" style="background-image: url('./切图/稳定.png?v=1784359573');"></span>
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784623300');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/稳定.png?v=1784623300');"></span>
               </div>
               <div class="signal-name">稳定</div>
               <div class="signal-meta">21–35天</div>
             </div>
             <div class="signal-item is-dim" data-signal="mild">
               <div class="signal-light">
-                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
-                <span class="signal-light-on" style="background-image: url('./切图/轻度波动.png?v=1784359573');"></span>
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784623300');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/轻度波动.png?v=1784623300');"></span>
               </div>
               <div class="signal-name">轻度波动</div>
               <div class="signal-meta">15–20或<br>36–90天</div>
             </div>
             <div class="signal-item is-dim" data-signal="strong">
               <div class="signal-light">
-                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
-                <span class="signal-light-on" style="background-image: url('./切图/明显波动.png?v=1784359573');"></span>
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784623300');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/明显波动.png?v=1784623300');"></span>
               </div>
               <div class="signal-name">明显波动</div>
               <div class="signal-meta">15–17天<br>46–90天</div>
             </div>
             <div class="signal-item is-dim" data-signal="watch">
               <div class="signal-light">
-                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
-                <span class="signal-light-on" style="background-image: url('./切图/建议关注.png?v=1784359573');"></span>
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784623300');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/建议关注.png?v=1784623300');"></span>
               </div>
               <div class="signal-name">建议关注</div>
               <div class="signal-meta">&lt;15天<br>&gt;90天</div>
@@ -1228,15 +1237,15 @@
           <div class="walk-chart">
             <div class="walk-item">
               <div class="walk-plot">
-                <div class="walk-value">5天</div>
-                <div class="walk-bar" style="height: 40px;"></div>
+                <div class="walk-value">7天</div>
+                <div class="walk-bar" style="height: 56px;"></div>
               </div>
               <div class="walk-label">上上次</div>
             </div>
             <div class="walk-item">
               <div class="walk-plot">
-                <div class="walk-value">6天</div>
-                <div class="walk-bar" style="height: 48px;"></div>
+                <div class="walk-value">5天</div>
+                <div class="walk-bar" style="height: 40px;"></div>
               </div>
               <div class="walk-label">上次</div>
             </div>
@@ -1331,11 +1340,9 @@
         activePlayButton.disabled = true;
       }
       const totalDuration = 1200;
-      await Promise.all(
-        cards.map((card) =>
-          runCardSteps(card, Number(card.dataset.steps || 1), totalDuration)
-        )
-      );
+      for (const card of cards) {
+        await runCardSteps(card, Number(card.dataset.steps || 1), totalDuration);
+      }
       if (activePlayButton) {
         activePlayButton.disabled = false;
       }
