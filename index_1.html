@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图表演示</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #292929;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+    }
+
+    .page {
+      width: 375px;
+      height: 812px;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .screen {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 220ms ease;
+    }
+
+    .screen.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .forecast {
+      position: absolute;
+      top: 285px;
+      left: 50%;
+      width: 303px;
+      transform: translateX(-50%);
+    }
+
+    .forecast-panel {
+      position: relative;
+      width: 303px;
+      height: 140px;
+      padding: 0;
+      background: #f2f2f5;
+      border: 1px solid #f0f0f0;
+      border-radius: 12px;
+    }
+
+    .title {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      margin: 0;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    .calendar {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      z-index: 1;
+      width: 303px;
+      height: 140px;
+      background: transparent;
+    }
+
+    .calendar-inner {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      height: 100%;
+      padding-top: 48px;
+    }
+
+    .card {
+      position: relative;
+      width: 85px;
+      height: 76px;
+      overflow: visible;
+      transform-style: preserve-3d;
+      perspective: 900px;
+      --flip-half-duration: 150ms;
+    }
+
+    .card-shadow {
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      width: 105px;
+      height: 96px;
+      background: url("./切图/阴影.png?v=1784355470") no-repeat top left / 100% 100%;
+      transform: translateX(-50%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .card-value {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 85px;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #eb5f94;
+      font-weight: 700;
+      letter-spacing: -2px;
+      z-index: 2;
+    }
+
+    .card-value.number {
+      font-size: 44px;
+    }
+
+    .card-value.week {
+      font-size: 32px;
+      letter-spacing: -1px;
+    }
+
+    .suffix {
+      margin-left: 2px;
+      align-self: flex-end;
+      padding-bottom: 21px;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .value-main {
+      display: inline-block;
+    }
+
+    .card-top,
+    .card-bottom {
+      position: absolute;
+      left: 0;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      transform-origin: top left;
+      transform: scale(0.3333333);
+    }
+
+    .card-top {
+      top: 0;
+      width: 255px;
+      height: 108px;
+      background-image: url("./切图/上半页.png?v=1784515428");
+    }
+
+    .card-bottom {
+      top: 36px;
+      width: 255px;
+      height: 108px;
+      background-image: url("./切图/下半页.png?v=1784515428");
+    }
+
+    .card-depth {
+      position: absolute;
+      left: 0;
+      top: 56px;
+      width: 255px;
+      height: 60px;
+      background: url("./切图/底部高度.png?v=1784515428") no-repeat top left / 100% 100%;
+      transform-origin: top left;
+      transform: scale(0.3333333);
+    }
+
+    .hinge-left,
+    .hinge-right {
+      position: absolute;
+      top: 29px;
+      width: 11px;
+      height: 45px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-image: url("./切图/金属轴.png?v=1784279373");
+      transform-origin: top left;
+      z-index: 3;
+    }
+
+    .hinge-left {
+      left: 0;
+      transform: scale(0.3333333);
+    }
+
+    .hinge-right {
+      right: 4px;
+      transform-origin: top right;
+      transform: scale(-0.3333333, 0.3333333);
+    }
+
+    .card-seam {
+      position: absolute;
+      left: 0;
+      top: 35.5px;
+      width: 85px;
+      height: 0.5px;
+      background: rgba(0, 0, 0, 0.2);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .flip-top,
+    .flip-bottom {
+      position: absolute;
+      left: 0;
+      width: 85px;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 4;
+      backface-visibility: hidden;
+    }
+
+    .flip-top {
+      top: 0;
+      height: 36px;
+      transform-origin: center bottom;
+    }
+
+    .flip-bottom {
+      top: 36px;
+      height: 40px;
+      transform-origin: center top;
+      transform: rotateX(90deg);
+    }
+
+    .flip-top .card-top,
+    .flip-bottom .card-bottom {
+      z-index: 0;
+    }
+
+    .flip-bottom .card-bottom {
+      top: 0;
+    }
+
+    .flip-top::after,
+    .flip-bottom::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .flip-top::after {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.18) 100%);
+      transform-origin: center bottom;
+    }
+
+    .flip-bottom::after {
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(255, 255, 255, 0.02) 100%);
+      transform-origin: center top;
+    }
+
+    .flip-top .card-value,
+    .flip-bottom .card-value {
+      z-index: 1;
+    }
+
+    .flip-bottom .card-value {
+      top: -36px;
+    }
+
+    .card.is-flipping .flip-top,
+    .card.is-flipping .flip-bottom {
+      opacity: 1;
+    }
+
+    .card.is-flipping .flip-top {
+      animation: flipTop var(--flip-half-duration) cubic-bezier(0.38, 0.02, 0.7, 0.28) forwards;
+    }
+
+    .card.is-flipping .flip-bottom {
+      animation: flipBottom var(--flip-half-duration) cubic-bezier(0.2, 0.75, 0.28, 1) var(--flip-half-duration) forwards;
+    }
+
+    .card.is-flipping .flip-top::after {
+      animation: topShade var(--flip-half-duration) ease-out forwards;
+    }
+
+    .card.is-flipping .flip-bottom::after {
+      animation: bottomShade var(--flip-half-duration) ease-out var(--flip-half-duration) forwards;
+    }
+
+    .card.is-flipping .card-shadow {
+      animation: cardShadowPulse calc(var(--flip-half-duration) * 2) ease-out forwards;
+    }
+
+    .play-button,
+    .switch-button {
+      position: absolute;
+      width: 136px;
+      height: 48px;
+      border-radius: 24px;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transform: translateX(-50%);
+      cursor: pointer;
+    }
+
+    .play-button {
+      left: 50%;
+      bottom: 36px;
+      border: 0;
+      background: linear-gradient(180deg, #ff7bac 0%, #eb5f94 100%);
+      color: #ffffff;
+      box-shadow: 0 12px 24px rgba(235, 95, 148, 0.25);
+    }
+
+    .play-button:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    .switch-button {
+      position: static;
+      border: 1px solid rgba(235, 95, 148, 0.18);
+      background: #ffffff;
+      color: #eb5f94;
+      box-shadow: 0 12px 24px rgba(235, 95, 148, 0.08);
+      transform: none;
+    }
+
+    .pager {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 20px;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+      min-height: 32px;
+      z-index: 10;
+    }
+
+    .pager-button {
+      min-width: 72px;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0;
+      box-shadow: none;
+    }
+
+    .pager-button.is-active {
+      background: linear-gradient(180deg, #ff7bac 0%, #eb5f94 100%);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 8px 18px rgba(235, 95, 148, 0.16);
+    }
+
+    .signal {
+      position: absolute;
+      top: 286px;
+      left: 50%;
+      width: 304px;
+      transform: translateX(-50%);
+    }
+
+    .signal-panel {
+      position: relative;
+      width: 304px;
+      height: 152px;
+      padding: 13px 12px 14px;
+      background: #f2f2f5;
+      border-radius: 12px;
+    }
+
+    .signal-title {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      margin: 0;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 2px;
+      padding-top: 32px;
+    }
+
+    .signal-item {
+      text-align: center;
+    }
+
+    .signal-light {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 11px;
+    }
+
+    .signal-light-off,
+    .signal-light-on {
+      position: absolute;
+      inset: 0;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      transition:
+        opacity 220ms ease,
+        filter 260ms ease;
+    }
+
+    .signal-light-off {
+      opacity: 1;
+    }
+
+    .signal-light-on {
+      opacity: 0;
+      filter: saturate(0.72) brightness(0.9);
+    }
+
+    .signal-name {
+      color: #353535;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.25;
+      transform: translateY(-2px);
+    }
+
+    .signal-item.is-dim .signal-name,
+    .signal-item.is-dim .signal-meta {
+      color: #cccccc;
+    }
+
+    .signal-meta {
+      margin-top: 6px;
+      color: #999999;
+      font-size: 11px;
+      line-height: 1.45;
+      transform: translateY(-4px);
+    }
+
+    .signal-item.is-dim .signal-light-on {
+      opacity: 0;
+      animation: signalFadeOut 400ms ease-out;
+    }
+
+    .signal-item.is-active .signal-light-on {
+      opacity: 1;
+      filter: saturate(1.04) brightness(1.04);
+      animation: signalFadeIn 400ms ease-out;
+    }
+
+    .signal-controls {
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      bottom: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .signal-reset-row,
+    .signal-color-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .signal-reset-row {
+      grid-template-columns: 72px;
+      justify-content: center;
+    }
+
+    .signal-color-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .signal-control {
+      height: 42px;
+      border: 0;
+      border-radius: 21px;
+      cursor: pointer;
+      box-shadow: 0 10px 18px rgba(0, 0, 0, 0.12);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        opacity 180ms ease;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .signal-control[data-signal="stable"] {
+      background: linear-gradient(180deg, #67e69b 0%, #39cc7c 100%);
+    }
+
+    .signal-control[data-signal="mild"] {
+      background: linear-gradient(180deg, #ffd85d 0%, #ffbe2f 100%);
+    }
+
+    .signal-control[data-signal="strong"] {
+      background: linear-gradient(180deg, #ff9b4e 0%, #ff6d2e 100%);
+    }
+
+    .signal-control[data-signal="watch"] {
+      background: linear-gradient(180deg, #d98cff 0%, #b95bff 100%);
+    }
+
+    .signal-control[data-signal="off"] {
+      background: linear-gradient(180deg, #d5d5d5 0%, #adadad 100%);
+    }
+
+    .signal-control.is-active {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .signal-control:active {
+      transform: translateY(0);
+    }
+
+    .bar-screen {
+      position: absolute;
+      top: 286px;
+      left: 50%;
+      width: 304px;
+      transform: translateX(-50%);
+    }
+
+    .bar-panel {
+      position: relative;
+      width: 304px;
+      height: 152px;
+      padding: 16px 8px 14px 8px;
+      background: #f2f2f5;
+      border-radius: 12px;
+      transition: background-color 220ms ease;
+    }
+
+    .bar-title {
+      position: absolute;
+      top: 0;
+      left: 8px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .bar-list {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      height: 32px;
+      align-items: center;
+      column-gap: 8px;
+    }
+
+    .bar-label {
+      display: grid;
+      grid-template-columns: 36px 48px;
+      align-items: baseline;
+      justify-content: start;
+      column-gap: 8px;
+      white-space: nowrap;
+    }
+
+    .bar-label-period {
+      width: 36px;
+      flex: 0 0 36px;
+      color: #ababab;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.2;
+      text-align: right;
+    }
+
+    .bar-label-status {
+      width: 48px;
+      flex: 0 0 48px;
+      color: #353535;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.2;
+      text-align: left;
+    }
+
+    .bar-track {
+      position: relative;
+      height: 18px;
+      justify-self: start;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 4px;
+      background: #ff71a0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .bar-value {
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .bar-title,
+    .bar-row,
+    .bar-track,
+    .bar-value,
+    .bar-label-status,
+    .bar-label-period {
+      transition-property: opacity, transform;
+      transition-timing-function: ease;
+    }
+
+    .bar-title {
+      transition-duration: 300ms;
+    }
+
+    .bar-row:nth-of-type(1) {
+      --bar-row-delay: 0ms;
+    }
+
+    .bar-row:nth-of-type(2) {
+      --bar-row-delay: 100ms;
+    }
+
+    .bar-row:nth-of-type(3) {
+      --bar-row-delay: 200ms;
+    }
+
+    .bar-label-period {
+      transition-duration: 300ms;
+      transition-delay: var(--bar-row-delay);
+    }
+
+    .bar-label-status {
+      transition-duration: 300ms;
+      transition-delay: calc(var(--bar-row-delay) + 20ms);
+    }
+
+    .bar-track {
+      transform-origin: left center;
+      transition-duration: 420ms;
+      transition-delay: calc(var(--bar-row-delay) + 40ms);
+    }
+
+    .bar-value {
+      transition-duration: 180ms;
+      transition-delay: calc(var(--bar-row-delay) + 220ms);
+    }
+
+    .bar-panel.is-empty .bar-title {
+      opacity: 0;
+      transform: none;
+    }
+
+    .bar-panel.is-empty {
+      background: transparent;
+    }
+
+    .bar-panel.is-empty .bar-row {
+      opacity: 0;
+      transform: none;
+    }
+
+    .bar-panel.is-empty .bar-track {
+      transform: scaleX(0);
+    }
+
+    .bar-panel.is-empty .bar-value {
+      opacity: 0;
+    }
+
+    .bar-panel.is-empty .bar-label-status,
+    .bar-panel.is-empty .bar-label-period {
+      opacity: 0;
+      transform: none;
+    }
+
+    .bar-panel.is-shell {
+      background: #f2f2f5;
+    }
+
+    .bar-panel.is-shell .bar-title {
+      opacity: 1;
+      transform: none;
+    }
+
+    .bar-panel.is-shell .bar-row {
+      opacity: 1;
+      transform: none;
+    }
+
+    .bar-panel.is-shell .bar-label-period {
+      opacity: 0;
+      transform: none;
+    }
+
+    .bar-panel.is-shell .bar-label-status,
+    .bar-panel.is-shell .bar-track,
+    .bar-panel.is-shell .bar-value {
+      opacity: 0;
+      transform: none;
+    }
+
+    .bar-panel.is-shell .bar-track {
+      transform: scaleX(0);
+    }
+
+    .bar-panel.no-transition,
+    .bar-panel.no-transition * {
+      transition: none !important;
+    }
+
+    .walk-screen {
+      position: absolute;
+      top: 286px;
+      left: 50%;
+      width: 304px;
+      transform: translateX(-50%);
+    }
+
+    .walk-panel {
+      position: relative;
+      width: 304px;
+      height: 152px;
+      padding: 0 16px 8px;
+      background: #f2f2f5;
+      border-radius: 12px;
+    }
+
+    .walk-panel,
+    .walk-panel * {
+      transition-timing-function: ease;
+    }
+
+    .walk-title {
+      position: absolute;
+      top: 0;
+      left: 8px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      transition-property: opacity, transform;
+      transition-duration: 300ms;
+    }
+
+    .walk-chart {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 40px;
+      bottom: 8px;
+      display: flex;
+      align-items: end;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 0 40px;
+      transition-property: opacity, transform;
+      transition-duration: 300ms;
+    }
+
+    .walk-item {
+      flex: 1 1 0;
+      width: auto;
+      height: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: end;
+      transform: translateY(-3px);
+      transition-property: opacity, transform;
+      transition-duration: 300ms;
+    }
+
+    .walk-plot {
+      height: 77px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: end;
+    }
+
+    .walk-value {
+      margin-top: 0;
+      margin-bottom: 4px;
+      color: #353535;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1;
+      transform: translateY(-3px);
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .walk-bar {
+      width: 20px;
+      border-radius: 4px 4px 0 0;
+      background: #ff71a0;
+      transform-origin: center bottom;
+      transition-property: opacity, transform;
+      transition-duration: 420ms;
+    }
+
+    .walk-item:nth-child(3) .walk-bar {
+      background: #ff71a0;
+    }
+
+    .walk-label {
+      margin-top: 4px;
+      color: #ababab;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1;
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .walk-item:nth-of-type(1) {
+      --walk-delay: 0ms;
+    }
+
+    .walk-item:nth-of-type(2) {
+      --walk-delay: 100ms;
+    }
+
+    .walk-item:nth-of-type(3) {
+      --walk-delay: 200ms;
+    }
+
+    .walk-item .walk-bar {
+      transition-delay: calc(var(--walk-delay) + 40ms);
+    }
+
+    .walk-item .walk-value {
+      transition-delay: calc(var(--walk-delay) + 440ms);
+    }
+
+    .walk-item .walk-label {
+      transition-delay: var(--walk-delay);
+    }
+
+    .walk-panel.is-empty {
+      background: transparent;
+    }
+
+    .walk-panel.is-empty .walk-title,
+    .walk-panel.is-empty .walk-chart {
+      opacity: 0;
+      transform: none;
+    }
+
+    .walk-panel.is-empty .walk-item,
+    .walk-panel.is-empty .walk-value,
+    .walk-panel.is-empty .walk-label {
+      opacity: 0;
+    }
+
+    .walk-panel.is-empty .walk-bar {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+
+    .walk-panel.is-shell {
+      background: #f2f2f5;
+    }
+
+    .walk-panel.is-shell .walk-title,
+    .walk-panel.is-shell .walk-chart {
+      opacity: 1;
+      transform: none;
+    }
+
+    .walk-panel.is-shell .walk-item,
+    .walk-panel.is-shell .walk-value,
+    .walk-panel.is-shell .walk-label {
+      opacity: 0;
+    }
+
+    .walk-panel.is-shell .walk-bar {
+      opacity: 0;
+      transform: scaleY(0);
+    }
+
+    .walk-panel.no-transition,
+    .walk-panel.no-transition * {
+      transition: none !important;
+    }
+
+    @keyframes flipTop {
+      from {
+        transform: rotateX(0deg) translateY(0);
+      }
+
+      to {
+        transform: rotateX(-102deg) translateY(1px);
+      }
+    }
+
+    @keyframes flipBottom {
+      from {
+        transform: rotateX(104deg) translateY(-1px);
+      }
+
+      to {
+        transform: rotateX(0deg) translateY(0);
+      }
+    }
+
+    @keyframes topShade {
+      from {
+        opacity: 0.18;
+      }
+
+      to {
+        opacity: 0.42;
+      }
+    }
+
+    @keyframes bottomShade {
+      from {
+        opacity: 0.45;
+      }
+
+      to {
+        opacity: 0.08;
+      }
+    }
+
+    @keyframes cardShadowPulse {
+      0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.92;
+      }
+
+      40% {
+        transform: translateX(-50%) scale(1.03, 1.01);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.92;
+      }
+    }
+
+    @keyframes signalFadeIn {
+      0% {
+        opacity: 0;
+        filter: saturate(0.72) brightness(0.9);
+      }
+
+      100% {
+        opacity: 1;
+        filter: saturate(1.04) brightness(1.04);
+      }
+    }
+
+    @keyframes signalFadeOut {
+      0% {
+        opacity: 1;
+        filter: saturate(1.04) brightness(1.04);
+      }
+
+      100% {
+        opacity: 0;
+        filter: saturate(0.72) brightness(0.9);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="screen screen-forecast" data-screen="forecast">
+      <section class="forecast">
+        <div class="forecast-panel">
+          <h1 class="title">下次月经预测</h1>
+          <div class="calendar">
+            <div class="calendar-inner">
+              <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="500" data-type="number" data-suffix="月">
+                <span class="card-shadow"></span>
+                <span class="card-top"></span>
+                <span class="card-depth"></span>
+                <span class="card-bottom"></span>
+                <span class="card-seam"></span>
+                <span class="hinge-left"></span>
+                <span class="hinge-right"></span>
+                <div class="card-value card-display number">
+                  <span class="value-main">12</span>
+                  <span class="suffix">月</span>
+                </div>
+                <div class="flip-top">
+                  <span class="card-top"></span>
+                  <div class="card-value number">
+                    <span class="value-main">12</span>
+                    <span class="suffix">月</span>
+                  </div>
+                </div>
+                <div class="flip-bottom">
+                  <span class="card-bottom"></span>
+                  <div class="card-value number">
+                    <span class="value-main">01</span>
+                    <span class="suffix">月</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="5" data-type="number" data-suffix="日">
+                <span class="card-shadow"></span>
+                <span class="card-top"></span>
+                <span class="card-depth"></span>
+                <span class="card-bottom"></span>
+                <span class="card-seam"></span>
+                <span class="hinge-left"></span>
+                <span class="hinge-right"></span>
+                <div class="card-value card-display number">
+                  <span class="value-main">22</span>
+                  <span class="suffix">日</span>
+                </div>
+                <div class="flip-top">
+                  <span class="card-top"></span>
+                  <div class="card-value number">
+                    <span class="value-main">22</span>
+                    <span class="suffix">日</span>
+                  </div>
+                </div>
+                <div class="flip-bottom">
+                  <span class="card-bottom"></span>
+                  <div class="card-value number">
+                    <span class="value-main">23</span>
+                    <span class="suffix">日</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="2" data-type="week">
+                <span class="card-shadow"></span>
+                <span class="card-top"></span>
+                <span class="card-depth"></span>
+                <span class="card-bottom"></span>
+                <span class="card-seam"></span>
+                <span class="hinge-left"></span>
+                <span class="hinge-right"></span>
+                <div class="card-value card-display week">
+                  <span class="value-main">周日</span>
+                </div>
+                <div class="flip-top">
+                  <span class="card-top"></span>
+                  <div class="card-value week">
+                    <span class="value-main">周日</span>
+                  </div>
+                </div>
+                <div class="flip-bottom">
+                  <span class="card-bottom"></span>
+                  <div class="card-value week">
+                    <span class="value-main">周一</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="pager">
+        <button class="switch-button pager-button" type="button" data-target="forecast">经期日历</button>
+        <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
+        <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
+        <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+      </div>
+      <button class="play-button" type="button">播放</button>
+    </section>
+
+    <section class="screen screen-signal" data-screen="signal">
+      <section class="signal">
+        <div class="signal-panel">
+          <h1 class="signal-title">月经信号灯</h1>
+          <div class="signal-grid">
+            <div class="signal-item is-dim" data-signal="stable">
+              <div class="signal-light">
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/稳定.png?v=1784359573');"></span>
+              </div>
+              <div class="signal-name">稳定</div>
+              <div class="signal-meta">21–35天</div>
+            </div>
+            <div class="signal-item is-dim" data-signal="mild">
+              <div class="signal-light">
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/轻度波动.png?v=1784359573');"></span>
+              </div>
+              <div class="signal-name">轻度波动</div>
+              <div class="signal-meta">15–20或<br>36–90天</div>
+            </div>
+            <div class="signal-item is-dim" data-signal="strong">
+              <div class="signal-light">
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/明显波动.png?v=1784359573');"></span>
+              </div>
+              <div class="signal-name">明显波动</div>
+              <div class="signal-meta">15–17天<br>46–90天</div>
+            </div>
+            <div class="signal-item is-dim" data-signal="watch">
+              <div class="signal-light">
+                <span class="signal-light-off" style="background-image: url('./切图/默认.png?v=1784359573');"></span>
+                <span class="signal-light-on" style="background-image: url('./切图/建议关注.png?v=1784359573');"></span>
+              </div>
+              <div class="signal-name">建议关注</div>
+              <div class="signal-meta">&lt;15天<br>&gt;90天</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="pager">
+        <button class="switch-button pager-button" type="button" data-target="forecast">经期日历</button>
+        <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
+        <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
+        <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+      </div>
+      <div class="signal-controls">
+        <div class="signal-color-row">
+          <button class="signal-control" type="button" data-signal="stable" aria-label="稳定"></button>
+          <button class="signal-control" type="button" data-signal="mild" aria-label="轻度波动"></button>
+          <button class="signal-control" type="button" data-signal="strong" aria-label="明显波动"></button>
+          <button class="signal-control" type="button" data-signal="watch" aria-label="建议关注"></button>
+        </div>
+        <div class="signal-reset-row">
+          <button class="signal-control is-active" type="button" data-signal="off" aria-label="还原">还原</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen screen-bar" data-screen="bar">
+      <section class="bar-screen">
+        <div class="bar-panel is-empty" data-state="empty">
+          <h1 class="bar-title">最近3个周期</h1>
+          <div class="bar-list">
+            <div class="bar-row">
+              <div class="bar-label">
+                <span class="bar-label-period">上上次</span>
+                <span class="bar-label-status">准时</span>
+              </div>
+              <div class="bar-track" style="width: 96.8%;">
+                <span class="bar-value">30天</span>
+              </div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span class="bar-label-period">上次</span>
+                <span class="bar-label-status">准时</span>
+              </div>
+              <div class="bar-track" style="width: 100%;">
+                <span class="bar-value">31天</span>
+              </div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">
+                <span class="bar-label-period">本次</span>
+                <span class="bar-label-status">推迟2天</span>
+              </div>
+              <div class="bar-track" style="width: 93.5%;">
+                <span class="bar-value">29天</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="pager">
+        <button class="switch-button pager-button" type="button" data-target="forecast">经期日历</button>
+        <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
+        <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
+        <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+      </div>
+      <button class="play-button bar-play-button" type="button">播放</button>
+    </section>
+
+    <section class="screen screen-walk is-active" data-screen="walk">
+      <section class="walk-screen">
+        <div class="walk-panel is-empty" data-state="empty">
+          <h1 class="walk-title">最近3次经期</h1>
+          <div class="walk-chart">
+            <div class="walk-item">
+              <div class="walk-plot">
+                <div class="walk-value">5天</div>
+                <div class="walk-bar" style="height: 40px;"></div>
+              </div>
+              <div class="walk-label">上上次</div>
+            </div>
+            <div class="walk-item">
+              <div class="walk-plot">
+                <div class="walk-value">6天</div>
+                <div class="walk-bar" style="height: 48px;"></div>
+              </div>
+              <div class="walk-label">上次</div>
+            </div>
+            <div class="walk-item">
+              <div class="walk-plot">
+                <div class="walk-value">7天</div>
+                <div class="walk-bar" style="height: 56px;"></div>
+              </div>
+              <div class="walk-label">本次</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="pager">
+        <button class="switch-button pager-button" type="button" data-target="forecast">经期日历</button>
+        <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
+        <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
+        <button class="switch-button pager-button is-active" type="button" data-target="walk">走了柱状图</button>
+      </div>
+      <button class="play-button walk-play-button" type="button">播放</button>
+    </section>
+  </div>
+  <script>
+    const cards = Array.from(document.querySelectorAll(".card"));
+    const screens = Array.from(document.querySelectorAll(".screen"));
+    const switchButtons = Array.from(document.querySelectorAll("[data-target]"));
+    const signalItems = Array.from(document.querySelectorAll(".signal-item"));
+    const signalControls = Array.from(document.querySelectorAll(".signal-control"));
+    const forecastPlayButton = document.querySelector(".screen-forecast .play-button");
+    const barPanel = document.querySelector(".bar-panel");
+    const barPlayButton = document.querySelector(".bar-play-button");
+    const walkPanel = document.querySelector(".walk-panel");
+    const walkPlayButton = document.querySelector(".walk-play-button");
+
+    function setCardText(card, value) {
+      const displayMain = card.querySelector(".card-display .value-main");
+      displayMain.textContent = value;
+    }
+
+    function prepareFlip(card, currentValue, nextValue) {
+      card.querySelector(".flip-top .value-main").textContent = currentValue;
+      card.querySelector(".flip-bottom .value-main").textContent = nextValue;
+    }
+
+    function flipCard(card, duration = 300) {
+      const sequence = JSON.parse(card.dataset.sequence);
+      const currentIndex = Number(card.dataset.index || 0);
+      const nextIndex = (currentIndex + 1) % sequence.length;
+      const currentValue = sequence[currentIndex];
+      const nextValue = sequence[nextIndex];
+
+      prepareFlip(card, currentValue, nextValue);
+      card.style.setProperty("--flip-half-duration", `${duration / 2}ms`);
+      card.classList.remove("is-flipping");
+      void card.offsetWidth;
+      card.classList.add("is-flipping");
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          setCardText(card, nextValue);
+        }, duration / 2);
+
+        setTimeout(() => {
+          card.dataset.index = String(nextIndex);
+          card.classList.remove("is-flipping");
+          resolve();
+        }, duration);
+      });
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function runCardSteps(card, steps, totalDuration) {
+      if (steps <= 0) {
+        await wait(totalDuration);
+        return;
+      }
+
+      const customDuration = Number(card.dataset.duration || 0);
+      const perFlipDuration = customDuration || Math.max(120, Math.round(totalDuration / steps));
+
+      for (let i = 0; i < steps; i += 1) {
+        await flipCard(card, perFlipDuration);
+      }
+    }
+
+    async function playFlip() {
+      const activePlayButton = document.querySelector(".screen.is-active .play-button");
+      if (activePlayButton) {
+        activePlayButton.disabled = true;
+      }
+      const totalDuration = 1200;
+      await Promise.all(
+        cards.map((card) =>
+          runCardSteps(card, Number(card.dataset.steps || 1), totalDuration)
+        )
+      );
+      if (activePlayButton) {
+        activePlayButton.disabled = false;
+      }
+    }
+
+    function showScreen(target) {
+      screens.forEach((screen) => {
+        screen.classList.toggle("is-active", screen.dataset.screen === target);
+      });
+
+      switchButtons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.target === target);
+      });
+    }
+
+    function setBarVisualState(state, options = {}) {
+      if (!barPanel) {
+        return;
+      }
+
+      if (options.immediate) {
+        barPanel.classList.add("no-transition");
+      }
+
+      barPanel.classList.toggle("is-empty", state === "empty");
+      barPanel.classList.toggle("is-shell", state === "shell");
+      barPanel.dataset.state = state;
+
+      if (options.immediate) {
+        void barPanel.offsetWidth;
+        barPanel.classList.remove("no-transition");
+      }
+    }
+
+    function setWalkVisualState(state, options = {}) {
+      if (!walkPanel) {
+        return;
+      }
+
+      if (options.immediate) {
+        walkPanel.classList.add("no-transition");
+      }
+
+      walkPanel.classList.toggle("is-empty", state === "empty");
+      walkPanel.classList.toggle("is-shell", state === "shell");
+      walkPanel.dataset.state = state;
+
+      if (options.immediate) {
+        void walkPanel.offsetWidth;
+        walkPanel.classList.remove("no-transition");
+      }
+    }
+
+    let barHasPlayed = false;
+    let barAnimating = false;
+    let walkHasPlayed = false;
+    let walkAnimating = false;
+
+    async function playBarChart() {
+      if (!barPanel || !barPlayButton || barAnimating) {
+        return;
+      }
+
+      barAnimating = true;
+      barPlayButton.disabled = true;
+
+      if (!barHasPlayed) {
+        setBarVisualState("empty", { immediate: true });
+        await wait(40);
+        setBarVisualState("shell");
+        await wait(300);
+        setBarVisualState("final");
+        await wait(860);
+        barHasPlayed = true;
+        barPlayButton.textContent = "还原";
+      } else {
+        setBarVisualState("empty");
+        await wait(360);
+        barHasPlayed = false;
+        barPlayButton.textContent = "播放";
+      }
+
+      barPlayButton.disabled = false;
+      barAnimating = false;
+    }
+
+    async function playWalkChart() {
+      if (!walkPanel || !walkPlayButton || walkAnimating) {
+        return;
+      }
+
+      walkAnimating = true;
+      walkPlayButton.disabled = true;
+
+      if (!walkHasPlayed) {
+        setWalkVisualState("empty", { immediate: true });
+        await wait(40);
+        setWalkVisualState("shell");
+        await wait(300);
+        setWalkVisualState("final");
+        await wait(860);
+        walkHasPlayed = true;
+        walkPlayButton.textContent = "还原";
+      } else {
+        setWalkVisualState("empty");
+        await wait(360);
+        walkHasPlayed = false;
+        walkPlayButton.textContent = "播放";
+      }
+
+      walkPlayButton.disabled = false;
+      walkAnimating = false;
+    }
+
+    switchButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        showScreen(button.dataset.target);
+      });
+    });
+
+    if (forecastPlayButton) {
+      forecastPlayButton.addEventListener("click", () => {
+        if (!forecastPlayButton.disabled) {
+          playFlip();
+        }
+      });
+    }
+
+    if (barPlayButton) {
+      barPlayButton.addEventListener("click", () => {
+        playBarChart();
+      });
+    }
+
+    if (walkPlayButton) {
+      walkPlayButton.addEventListener("click", () => {
+        playWalkChart();
+      });
+    }
+
+    setBarVisualState("empty", { immediate: true });
+    setWalkVisualState("empty", { immediate: true });
+
+    function setActiveSignal(target, options = {}) {
+      const { highlightText = true } = options;
+
+      signalItems.forEach((item) => {
+        const isActive = target !== "off" && item.dataset.signal === target;
+        item.classList.toggle("is-dim", !isActive || !highlightText);
+        item.classList.toggle("is-active", isActive);
+        const lightOn = item.querySelector(".signal-light-on");
+        if (isActive) {
+          lightOn.style.animation = "none";
+          void lightOn.offsetWidth;
+          lightOn.style.animation = "";
+        }
+      });
+
+      signalControls.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.signal === target);
+      });
+    }
+
+    let signalSequenceRunning = false;
+
+    async function playSignalSequence(finalSignal) {
+      if (signalSequenceRunning) {
+        return;
+      }
+
+      signalSequenceRunning = true;
+      const sequence = ["stable", "mild", "strong", "watch"];
+      const finalIndex = sequence.indexOf(finalSignal);
+      const leadInSequence = finalIndex >= 0 ? sequence.slice(0, finalIndex) : [];
+
+      setActiveSignal("off");
+      await wait(400);
+
+      for (const signal of sequence) {
+        setActiveSignal(signal, { highlightText: false });
+        await wait(400);
+      }
+
+      for (const signal of sequence) {
+        setActiveSignal(signal, { highlightText: false });
+        await wait(400);
+      }
+
+      for (const signal of leadInSequence) {
+        setActiveSignal(signal, { highlightText: false });
+        await wait(400);
+      }
+
+      setActiveSignal(finalSignal);
+      signalSequenceRunning = false;
+    }
+
+    signalControls.forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.signal === "off") {
+          setActiveSignal("off");
+          signalSequenceRunning = false;
+          return;
+        }
+
+        playSignalSequence(button.dataset.signal);
+      });
+    });
+  </script>
+</body>
+</html>
