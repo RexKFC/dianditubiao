@@ -666,11 +666,11 @@
     }
 
     .bar-row:nth-of-type(2) {
-      --bar-row-delay: 100ms;
+      --bar-row-delay: 150ms;
     }
 
     .bar-row:nth-of-type(3) {
-      --bar-row-delay: 200ms;
+      --bar-row-delay: 300ms;
     }
 
     .bar-label-period {
@@ -685,7 +685,7 @@
 
     .bar-track {
       transform-origin: left center;
-      transition-duration: 420ms;
+      transition-duration: 350ms;
       transition-delay: calc(var(--bar-row-delay) + 40ms);
     }
 
@@ -841,7 +841,7 @@
       line-height: 1;
       transform: translateY(-3px);
       transition-property: opacity;
-      transition-duration: 160ms;
+      transition-duration: 100ms;
     }
 
     .walk-bar {
@@ -850,7 +850,7 @@
       background: #ff71a0;
       transform-origin: center bottom;
       transition-property: opacity, transform;
-      transition-duration: 420ms;
+      transition-duration: 350ms;
     }
 
     .walk-item:nth-child(3) .walk-bar {
@@ -872,11 +872,11 @@
     }
 
     .walk-item:nth-of-type(2) {
-      --walk-delay: 200ms;
+      --walk-delay: 150ms;
     }
 
     .walk-item:nth-of-type(3) {
-      --walk-delay: 400ms;
+      --walk-delay: 300ms;
     }
 
     .walk-item .walk-bar {
@@ -884,15 +884,15 @@
     }
 
     .walk-item:nth-of-type(1) .walk-value {
-      transition-delay: 460ms;
+      transition-delay: 390ms;
     }
 
     .walk-item:nth-of-type(2) .walk-value {
-      transition-delay: 660ms;
+      transition-delay: 540ms;
     }
 
     .walk-item:nth-of-type(3) .walk-value {
-      transition-delay: 860ms;
+      transition-delay: 690ms;
     }
 
     .walk-item .walk-label {
@@ -1036,7 +1036,7 @@
           <h1 class="title">下次月经预测</h1>
           <div class="calendar">
             <div class="calendar-inner">
-              <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="500" data-type="number" data-suffix="月">
+              <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="400" data-type="number" data-suffix="月">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1063,7 +1063,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="5" data-type="number" data-suffix="日">
+              <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="5" data-duration="200" data-type="number" data-suffix="日">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1090,7 +1090,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="2" data-type="week">
+              <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="7" data-duration="200" data-type="week">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1237,15 +1237,15 @@
           <div class="walk-chart">
             <div class="walk-item">
               <div class="walk-plot">
-                <div class="walk-value">7天</div>
-                <div class="walk-bar" style="height: 56px;"></div>
+                <div class="walk-value">5天</div>
+                <div class="walk-bar" style="height: 40px;"></div>
               </div>
               <div class="walk-label">上上次</div>
             </div>
             <div class="walk-item">
               <div class="walk-plot">
-                <div class="walk-value">5天</div>
-                <div class="walk-bar" style="height: 40px;"></div>
+                <div class="walk-value">6天</div>
+                <div class="walk-bar" style="height: 48px;"></div>
               </div>
               <div class="walk-label">上次</div>
             </div>
@@ -1340,9 +1340,11 @@
         activePlayButton.disabled = true;
       }
       const totalDuration = 1200;
-      for (const card of cards) {
-        await runCardSteps(card, Number(card.dataset.steps || 1), totalDuration);
-      }
+      await Promise.all([
+        ...cards.map((card) =>
+          runCardSteps(card, Number(card.dataset.steps || 1), totalDuration)
+        ),
+      ]);
       if (activePlayButton) {
         activePlayButton.disabled = false;
       }
