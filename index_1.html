@@ -1244,10 +1244,10 @@
       </div>
       <div class="signal-controls">
         <div class="signal-color-row">
-          <button class="signal-control" type="button" data-signal="stable" aria-label="稳定"></button>
-          <button class="signal-control" type="button" data-signal="mild" aria-label="轻度波动"></button>
-          <button class="signal-control" type="button" data-signal="strong" aria-label="明显波动"></button>
-          <button class="signal-control" type="button" data-signal="watch" aria-label="建议关注"></button>
+          <button class="signal-control" type="button" data-signal="stable" aria-label="稳定">点亮</button>
+          <button class="signal-control" type="button" data-signal="mild" aria-label="轻度波动">点亮</button>
+          <button class="signal-control" type="button" data-signal="strong" aria-label="明显波动">点亮</button>
+          <button class="signal-control" type="button" data-signal="watch" aria-label="建议关注">点亮</button>
         </div>
         <div class="signal-reset-row">
           <button class="signal-control is-active" type="button" data-signal="off" aria-label="还原">还原</button>
@@ -1256,7 +1256,7 @@
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
         <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 300ms展示默认图表，四颗灯会先按顺序轮闪一遍。</p>
+          <p class="screen-notes-item">1. 300ms展示默认图表，四颗灯会先按顺序轮闪一遍，再轮闪到目标灯前一颗。</p>
           <p class="screen-notes-item">2. 单颗灯的点亮和熄灭时长都是 250ms，播放方式是一个灯紧接着一个灯，不重叠。</p>
           <p class="screen-notes-item">3. 轮闪阶段文字保持置灰，最终定位到目标灯后，灯和对应文字一起点亮。</p>
         </div>
@@ -1617,11 +1617,6 @@
 
       setActiveSignal("off");
       await wait(250);
-
-      for (const signal of sequence) {
-        setActiveSignal(signal, { highlightText: false });
-        await wait(250);
-      }
 
       for (const signal of sequence) {
         setActiveSignal(signal, { highlightText: false });
