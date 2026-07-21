@@ -49,7 +49,7 @@
 
     .forecast {
       position: absolute;
-      top: 285px;
+      top: 228px;
       left: 50%;
       width: 303px;
       transform: translateX(-50%);
@@ -336,6 +336,67 @@
       box-shadow: 0 12px 24px rgba(235, 95, 148, 0.25);
     }
 
+    .forecast-play-button {
+      bottom: 346px;
+    }
+
+    .forecast-notes {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 34px;
+      color: #7f7f86;
+      font-size: 17px;
+      line-height: 1.55;
+      text-align: left;
+    }
+
+    .forecast-notes-title {
+      margin: 0 0 8px;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .forecast-notes-text {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .chart-play-button {
+      bottom: 334px;
+    }
+
+    .screen-notes {
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 34px;
+      color: #7f7f86;
+      text-align: left;
+    }
+
+    .screen-notes-title {
+      margin: 0 0 10px;
+      color: #353535;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .screen-notes-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .screen-notes-item {
+      margin: 0 0 6px;
+    }
+
     .play-button:disabled {
       opacity: 0.7;
       cursor: default;
@@ -383,7 +444,7 @@
 
     .signal {
       position: absolute;
-      top: 286px;
+      top: 228px;
       left: 50%;
       width: 304px;
       transform: translateX(-50%);
@@ -472,20 +533,20 @@
 
     .signal-item.is-dim .signal-light-on {
       opacity: 0;
-      animation: signalFadeOut 400ms ease-out;
+      animation: signalFadeOut 250ms ease-out;
     }
 
     .signal-item.is-active .signal-light-on {
       opacity: 1;
       filter: saturate(1.04) brightness(1.04);
-      animation: signalFadeIn 400ms ease-out;
+      animation: signalFadeIn 250ms ease-out;
     }
 
     .signal-controls {
       position: absolute;
       left: 24px;
       right: 24px;
-      bottom: 36px;
+      top: 430px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -553,7 +614,7 @@
 
     .bar-screen {
       position: absolute;
-      top: 286px;
+      top: 228px;
       left: 50%;
       width: 304px;
       transform: translateX(-50%);
@@ -666,11 +727,11 @@
     }
 
     .bar-row:nth-of-type(2) {
-      --bar-row-delay: 150ms;
+      --bar-row-delay: 250ms;
     }
 
     .bar-row:nth-of-type(3) {
-      --bar-row-delay: 300ms;
+      --bar-row-delay: 500ms;
     }
 
     .bar-label-period {
@@ -685,7 +746,7 @@
 
     .bar-track {
       transform-origin: left center;
-      transition-duration: 350ms;
+      transition-duration: 500ms;
       transition-delay: calc(var(--bar-row-delay) + 40ms);
     }
 
@@ -759,7 +820,7 @@
 
     .walk-screen {
       position: absolute;
-      top: 286px;
+      top: 228px;
       left: 50%;
       width: 304px;
       transform: translateX(-50%);
@@ -1124,7 +1185,11 @@
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
       </div>
-      <button class="play-button" type="button">播放</button>
+      <button class="play-button forecast-play-button" type="button">播放</button>
+      <div class="forecast-notes">
+        <p class="forecast-notes-title">动效说明</p>
+        <p class="forecast-notes-text">月卡翻 1 页，320ms/页；日卡翻 5 页，160ms/页；周卡翻 7 页，160ms/页。三张卡片同时开始翻页。</p>
+      </div>
     </section>
 
     <section class="screen screen-signal" data-screen="signal">
@@ -1184,6 +1249,14 @@
           <button class="signal-control is-active" type="button" data-signal="off" aria-label="还原">还原</button>
         </div>
       </div>
+      <div class="screen-notes">
+        <p class="screen-notes-title">动效说明</p>
+        <div class="screen-notes-list">
+          <p class="screen-notes-item">1. 点击任意彩色按钮后，四颗灯会先按顺序轮闪一遍。</p>
+          <p class="screen-notes-item">2. 单颗灯的点亮和熄灭时长都是 250ms，播放方式是一个灯紧接着一个灯，不重叠。</p>
+          <p class="screen-notes-item">3. 轮闪阶段文字保持置灰，最终定位到目标灯后，灯和对应文字一起点亮。</p>
+        </div>
+      </div>
     </section>
 
     <section class="screen screen-bar" data-screen="bar">
@@ -1227,7 +1300,16 @@
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
       </div>
-      <button class="play-button bar-play-button" type="button">播放</button>
+      <button class="play-button bar-play-button chart-play-button" type="button">播放</button>
+      <div class="screen-notes">
+        <p class="screen-notes-title">动效说明</p>
+        <div class="screen-notes-list">
+          <p class="screen-notes-item">1. 默认进入空状态， 300ms展示空壳图表。</p>
+          <p class="screen-notes-item">2. 三条柱子按 0ms、250ms、500ms 依次开始绘制。</p>
+          <p class="screen-notes-item">3. 单条柱子的绘制时长为 500ms，</p>
+          <p class="screen-notes-item">4. 文案和数值跟随各自行的动效出场</p>
+        </div>
+      </div>
     </section>
 
     <section class="screen screen-walk" data-screen="walk">
@@ -1265,7 +1347,16 @@
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
       </div>
-      <button class="play-button walk-play-button" type="button">播放</button>
+      <button class="play-button walk-play-button chart-play-button" type="button">播放</button>
+      <div class="screen-notes">
+        <p class="screen-notes-title">动效说明</p>
+        <div class="screen-notes-list">
+          <p class="screen-notes-item">1. 默认进入空状态，点击播放后先展示 300ms 的空壳图表。</p>
+          <p class="screen-notes-item">2. 三根柱子按 0ms、150ms、300ms 依次开始变高。</p>
+          <p class="screen-notes-item">3. 单根柱子的变高时长为 350ms，</p>
+          <p class="screen-notes-item">4. 每根柱子结束后，对应天数以 100ms 渐显出现</p>
+        </div>
+      </div>
     </section>
   </div>
   <script>
@@ -1521,21 +1612,21 @@
       const leadInSequence = finalIndex >= 0 ? sequence.slice(0, finalIndex) : [];
 
       setActiveSignal("off");
-      await wait(400);
+      await wait(250);
 
       for (const signal of sequence) {
         setActiveSignal(signal, { highlightText: false });
-        await wait(400);
+        await wait(250);
       }
 
       for (const signal of sequence) {
         setActiveSignal(signal, { highlightText: false });
-        await wait(400);
+        await wait(250);
       }
 
       for (const signal of leadInSequence) {
         setActiveSignal(signal, { highlightText: false });
-        await wait(400);
+        await wait(250);
       }
 
       setActiveSignal(finalSignal);
