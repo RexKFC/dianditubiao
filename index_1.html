@@ -136,6 +136,30 @@
       z-index: 2;
     }
 
+    .card-display-top,
+    .card-display-bottom {
+      position: absolute;
+      left: 0;
+      width: 85px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .card-display-top {
+      top: 0;
+      height: 36px;
+    }
+
+    .card-display-bottom {
+      top: 36px;
+      height: 40px;
+    }
+
+    .card-display-bottom .card-value {
+      top: -36px;
+    }
+
     .card-value.number {
       font-size: 44px;
     }
@@ -271,12 +295,12 @@
     }
 
     .flip-top::after {
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.02) 0%, rgba(0, 0, 0, 0.18) 100%);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.28) 100%);
       transform-origin: center bottom;
     }
 
     .flip-bottom::after {
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(255, 255, 255, 0.02) 100%);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(255, 255, 255, 0.02) 100%);
       transform-origin: center top;
     }
 
@@ -417,7 +441,7 @@
       right: 20px;
       top: 20px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       justify-content: flex-end;
       align-items: center;
       min-height: 32px;
@@ -425,11 +449,11 @@
     }
 
     .pager-button {
-      min-width: 72px;
+      min-width: 58px;
       height: 32px;
-      padding: 0 14px;
+      padding: 0 8px;
       border-radius: 16px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0;
       box-shadow: none;
@@ -440,6 +464,10 @@
       color: #ffffff;
       border-color: transparent;
       box-shadow: 0 8px 18px rgba(235, 95, 148, 0.16);
+    }
+
+    .pager-button.is-disabled:not(.is-active) {
+      color: #999999;
     }
 
     .signal {
@@ -699,6 +727,7 @@
       padding-right: 4px;
       background: #ff71a0;
       border-radius: 0 4px 4px 0;
+      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .bar-value {
@@ -727,11 +756,11 @@
     }
 
     .bar-row:nth-of-type(2) {
-      --bar-row-delay: 250ms;
+      --bar-row-delay: 200ms;
     }
 
     .bar-row:nth-of-type(3) {
-      --bar-row-delay: 500ms;
+      --bar-row-delay: 400ms;
     }
 
     .bar-label-period {
@@ -746,13 +775,13 @@
 
     .bar-track {
       transform-origin: left center;
-      transition-duration: 500ms;
+      transition-duration: 400ms;
       transition-delay: calc(var(--bar-row-delay) + 40ms);
     }
 
     .bar-value {
       transition-duration: 180ms;
-      transition-delay: calc(var(--bar-row-delay) + 220ms);
+      transition-delay: calc(var(--bar-row-delay) + 180ms);
     }
 
     .bar-panel.is-empty .bar-title {
@@ -901,8 +930,9 @@
       font-weight: 400;
       line-height: 1;
       transform: translateY(-3px);
-      transition-property: opacity;
-      transition-duration: 100ms;
+      transition-property: opacity, transform;
+      transition-duration: 100ms, 350ms;
+      transition-timing-function: ease, cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .walk-bar {
@@ -910,8 +940,9 @@
       border-radius: 4px 4px 0 0;
       background: #ff71a0;
       transform-origin: center bottom;
-      transition-property: opacity, transform;
+      transition-property: transform;
       transition-duration: 350ms;
+      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .walk-item:nth-child(3) .walk-bar {
@@ -941,19 +972,19 @@
     }
 
     .walk-item .walk-bar {
-      transition-delay: calc(var(--walk-delay) + 40ms);
+      transition-delay: var(--walk-delay);
     }
 
     .walk-item:nth-of-type(1) .walk-value {
-      transition-delay: 390ms;
+      transition-delay: 100ms, 0ms;
     }
 
     .walk-item:nth-of-type(2) .walk-value {
-      transition-delay: 540ms;
+      transition-delay: 250ms, 150ms;
     }
 
     .walk-item:nth-of-type(3) .walk-value {
-      transition-delay: 690ms;
+      transition-delay: 400ms, 300ms;
     }
 
     .walk-item .walk-label {
@@ -976,8 +1007,11 @@
       opacity: 0;
     }
 
+    .walk-panel.is-empty .walk-value {
+      transform: translateY(calc(var(--walk-bar-height) - 3px));
+    }
+
     .walk-panel.is-empty .walk-bar {
-      opacity: 0;
       transform: scaleY(0);
     }
 
@@ -997,13 +1031,216 @@
       opacity: 0;
     }
 
+    .walk-panel.is-shell .walk-value {
+      transform: translateY(calc(var(--walk-bar-height) - 3px));
+    }
+
     .walk-panel.is-shell .walk-bar {
-      opacity: 0;
       transform: scaleY(0);
     }
 
     .walk-panel.no-transition,
     .walk-panel.no-transition * {
+      transition: none !important;
+    }
+
+    .symptom-screen {
+      position: absolute;
+      top: 228px;
+      left: 50%;
+      width: 304px;
+      transform: translateX(-50%);
+    }
+
+    .symptom-panel {
+      position: relative;
+      width: 304px;
+      height: 130px;
+      padding: 8px;
+      background: #fafafa;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .symptom-panel,
+    .symptom-panel * {
+      transition-timing-function: ease;
+    }
+
+    .symptom-grid {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding-left: 52px;
+      padding-right: 0;
+      padding-bottom: 22px;
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .symptom-row {
+      position: relative;
+      height: 18px;
+      margin-bottom: 0;
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .symptom-row::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-bottom: 1px dashed #e8e8e8;
+    }
+
+    .symptom-label {
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      width: 52px;
+      padding-right: 4px;
+      transform: translateY(-50%);
+      color: #b0b0b8;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1;
+      text-align: right;
+      white-space: nowrap;
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .symptom-event {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #ff71a0;
+      color: #ffffff;
+      font-size: 10px;
+      line-height: 18px;
+      text-align: center;
+      white-space: nowrap;
+      transition-property: opacity, transform;
+      transition-duration: 350ms;
+    }
+
+    .symptom-event.is-pill {
+      min-width: 54px;
+      height: 12px;
+      padding: 0 6px 0 0;
+      border-radius: 6px;
+      line-height: 12px;
+      text-align: right;
+    }
+
+    .symptom-event.is-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .symptom-dates {
+      position: absolute;
+      left: 52px;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      align-items: center;
+      color: #aaaaaf;
+      font-size: 11px;
+      line-height: 1;
+      text-align: center;
+      transition-property: opacity;
+      transition-duration: 300ms;
+    }
+
+    .symptom-dates span:last-child {
+      color: #9f9fa7;
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .symptom-row:nth-of-type(1) {
+      --symptom-delay: 0ms;
+    }
+
+    .symptom-row:nth-of-type(2) {
+      --symptom-delay: 150ms;
+    }
+
+    .symptom-row:nth-of-type(3) {
+      --symptom-delay: 300ms;
+    }
+
+    .symptom-row:nth-of-type(4) {
+      --symptom-delay: 450ms;
+    }
+
+    .symptom-row:nth-of-type(5) {
+      --symptom-delay: 600ms;
+    }
+
+    .symptom-row,
+    .symptom-row .symptom-label {
+      transition-delay: var(--symptom-delay);
+    }
+
+    .symptom-row .symptom-event {
+      transition-delay: calc(var(--symptom-delay) + 40ms);
+    }
+
+    .symptom-dates {
+      transition-delay: 750ms;
+    }
+
+    .symptom-panel.is-empty {
+      background: transparent;
+    }
+
+    .symptom-panel.is-empty .symptom-grid,
+    .symptom-panel.is-empty .symptom-row,
+    .symptom-panel.is-empty .symptom-label,
+    .symptom-panel.is-empty .symptom-dates {
+      opacity: 0;
+    }
+
+    .symptom-panel.is-empty .symptom-event {
+      opacity: 0;
+      transform: translateY(-50%) scale(0.8);
+    }
+
+    .symptom-panel.is-shell {
+      background: #fafafa;
+    }
+
+    .symptom-panel.is-shell .symptom-grid,
+    .symptom-panel.is-shell .symptom-dates {
+      opacity: 1;
+    }
+
+    .symptom-panel.is-shell .symptom-row {
+      opacity: 1;
+      transition-delay: 0ms;
+    }
+
+    .symptom-panel.is-shell .symptom-label {
+      opacity: 0;
+    }
+
+    .symptom-panel.is-shell .symptom-dates {
+      transition-delay: 0ms;
+    }
+
+    .symptom-panel.is-shell .symptom-event {
+      opacity: 0;
+      transform: translateY(-50%) scale(0.8);
+    }
+
+    .symptom-panel.no-transition,
+    .symptom-panel.no-transition * {
       transition: none !important;
     }
 
@@ -1029,38 +1266,38 @@
 
     @keyframes topShade {
       from {
-        opacity: 0.18;
+        opacity: 0.26;
       }
 
       to {
-        opacity: 0.42;
+        opacity: 0.58;
       }
     }
 
     @keyframes bottomShade {
       from {
-        opacity: 0.45;
+        opacity: 0.56;
       }
 
       to {
-        opacity: 0.08;
+        opacity: 0.14;
       }
     }
 
     @keyframes cardShadowPulse {
       0% {
         transform: translateX(-50%) scale(1);
-        opacity: 0.92;
+        opacity: 0.98;
       }
 
       40% {
-        transform: translateX(-50%) scale(1.03, 1.01);
+        transform: translateX(-50%) scale(1.04, 1.02);
         opacity: 1;
       }
 
       100% {
         transform: translateX(-50%) scale(1);
-        opacity: 0.92;
+        opacity: 0.98;
       }
     }
 
@@ -1091,13 +1328,13 @@
 </head>
 <body>
   <div class="page">
-    <section class="screen screen-forecast is-active" data-screen="forecast">
+    <section class="screen screen-forecast" data-screen="forecast">
       <section class="forecast">
         <div class="forecast-panel">
           <h1 class="title">下次月经预测</h1>
           <div class="calendar">
             <div class="calendar-inner">
-              <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="320" data-type="number" data-suffix="月">
+              <div class="card" data-sequence='["12","01","02","03","04","05","06"]' data-steps="1" data-duration="320" data-start-delay="0" data-type="number" data-suffix="月">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1105,9 +1342,17 @@
                 <span class="card-seam"></span>
                 <span class="hinge-left"></span>
                 <span class="hinge-right"></span>
-                <div class="card-value card-display number">
-                  <span class="value-main">12</span>
-                  <span class="suffix">月</span>
+                <div class="card-display-top">
+                  <div class="card-value number">
+                    <span class="value-main">12</span>
+                    <span class="suffix">月</span>
+                  </div>
+                </div>
+                <div class="card-display-bottom">
+                  <div class="card-value number">
+                    <span class="value-main">12</span>
+                    <span class="suffix">月</span>
+                  </div>
                 </div>
                 <div class="flip-top">
                   <span class="card-top"></span>
@@ -1124,7 +1369,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="5" data-duration="160" data-type="number" data-suffix="日">
+              <div class="card" data-sequence='["22","23","24","25","26","27","28","29"]' data-steps="4" data-duration="250" data-start-delay="0" data-type="number" data-suffix="日">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1132,9 +1377,17 @@
                 <span class="card-seam"></span>
                 <span class="hinge-left"></span>
                 <span class="hinge-right"></span>
-                <div class="card-value card-display number">
-                  <span class="value-main">22</span>
-                  <span class="suffix">日</span>
+                <div class="card-display-top">
+                  <div class="card-value number">
+                    <span class="value-main">22</span>
+                    <span class="suffix">日</span>
+                  </div>
+                </div>
+                <div class="card-display-bottom">
+                  <div class="card-value number">
+                    <span class="value-main">22</span>
+                    <span class="suffix">日</span>
+                  </div>
                 </div>
                 <div class="flip-top">
                   <span class="card-top"></span>
@@ -1151,7 +1404,7 @@
                   </div>
                 </div>
               </div>
-              <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="7" data-duration="160" data-type="week">
+              <div class="card" data-sequence='["周日","周一","周二","周三","周四","周五","周六","周日"]' data-steps="4" data-duration="250" data-start-delay="150" data-type="week">
                 <span class="card-shadow"></span>
                 <span class="card-top"></span>
                 <span class="card-depth"></span>
@@ -1159,8 +1412,15 @@
                 <span class="card-seam"></span>
                 <span class="hinge-left"></span>
                 <span class="hinge-right"></span>
-                <div class="card-value card-display week">
-                  <span class="value-main">周日</span>
+                <div class="card-display-top">
+                  <div class="card-value week">
+                    <span class="value-main">周日</span>
+                  </div>
+                </div>
+                <div class="card-display-bottom">
+                  <div class="card-value week">
+                    <span class="value-main">周日</span>
+                  </div>
                 </div>
                 <div class="flip-top">
                   <span class="card-top"></span>
@@ -1184,15 +1444,16 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
       </div>
       <button class="play-button forecast-play-button" type="button">播放</button>
       <div class="forecast-notes">
         <p class="forecast-notes-title">动效说明</p>
         <p class="forecast-notes-text">1. 300ms渐显展示日历。</p>
-        <p class="forecast-notes-text">2. 三张卡片同时开始翻页。</p>
+        <p class="forecast-notes-text">2. 月卡和日卡同时开始；周卡延后 150ms 开始。</p>
         <p class="forecast-notes-text">3. 月卡翻 1 页，320ms/页。</p>
-        <p class="forecast-notes-text">4. 日卡翻 5 页，160ms/页。</p>
-        <p class="forecast-notes-text">5. 周卡翻 7 页，160ms/页。</p>
+        <p class="forecast-notes-text">4. 日卡翻 4 页，250ms/页。</p>
+        <p class="forecast-notes-text">5. 周卡翻 4 页，250ms/页。</p>
       </div>
     </section>
 
@@ -1241,6 +1502,7 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
       </div>
       <div class="signal-controls">
         <div class="signal-color-row">
@@ -1303,15 +1565,17 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
       </div>
       <button class="play-button bar-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
         <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 默认进入空状态， 300ms展示空壳图表。</p>
-          <p class="screen-notes-item">2. 三条柱子按 0ms、250ms、500ms 依次开始绘制。</p>
-          <p class="screen-notes-item">3. 单条柱子的绘制时长为 500ms，</p>
-          <p class="screen-notes-item">4. 文案和数值跟随各自行的动效出场</p>
+          <p class="screen-notes-item">1. 300ms 渐显空壳图表。</p>
+          <p class="screen-notes-item">2. 三条柱子按 0ms、200ms、400ms 依次开始绘制。</p>
+          <p class="screen-notes-item">3. 单条柱子的绘制时长为 400ms，动画曲线为 cubic-bezier(0.16, 1, 0.3, 1)。</p>
+          <p class="screen-notes-item">4. 左侧文案跟随各自行同步出场。</p>
+          <p class="screen-notes-item">5. 每条柱内的天数会跟随对应柱子的节奏出场，并在柱子开始后约 180ms 渐显出现。</p>
         </div>
       </div>
     </section>
@@ -1321,21 +1585,21 @@
         <div class="walk-panel is-empty" data-state="empty">
           <h1 class="walk-title">最近3次经期</h1>
           <div class="walk-chart">
-            <div class="walk-item">
+            <div class="walk-item" style="--walk-bar-height: 40px;">
               <div class="walk-plot">
                 <div class="walk-value">5天</div>
                 <div class="walk-bar" style="height: 40px;"></div>
               </div>
               <div class="walk-label">上上次</div>
             </div>
-            <div class="walk-item">
+            <div class="walk-item" style="--walk-bar-height: 48px;">
               <div class="walk-plot">
                 <div class="walk-value">6天</div>
                 <div class="walk-bar" style="height: 48px;"></div>
               </div>
               <div class="walk-label">上次</div>
             </div>
-            <div class="walk-item">
+            <div class="walk-item" style="--walk-bar-height: 56px;">
               <div class="walk-plot">
                 <div class="walk-value">7天</div>
                 <div class="walk-bar" style="height: 56px;"></div>
@@ -1350,17 +1614,67 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
       </div>
       <button class="play-button walk-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
         <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 默认进入空状态，点击播放后先展示 300ms 的空壳图表。</p>
+          <p class="screen-notes-item">1. 300ms 渐显空壳图表。</p>
           <p class="screen-notes-item">2. 三根柱子按 0ms、150ms、300ms 依次开始变高。</p>
-          <p class="screen-notes-item">3. 单根柱子的变高时长为 350ms，</p>
-          <p class="screen-notes-item">4. 每根柱子结束后，对应天数以 100ms 渐显出现</p>
+          <p class="screen-notes-item">3. 单根柱子的变高时长为 350ms，动画曲线为 cubic-bezier(0.16, 1, 0.3, 1)。</p>
+          <p class="screen-notes-item">4. 天数会跟随各自柱子一起上移，并保持和柱顶的固定间距。</p>
+          <p class="screen-notes-item">5. 每根柱子的天数会在对应柱子开始后 100ms 触发渐显，渐显时长为 100ms。</p>
         </div>
       </div>
+    </section>
+
+    <section class="screen screen-symptom" data-screen="symptom">
+      <section class="symptom-screen">
+        <div class="symptom-panel is-empty" data-state="empty">
+          <div class="symptom-grid">
+            <div class="symptom-row">
+              <div class="symptom-label">腹痛难忍</div>
+              <span class="symptom-event is-pill" style="left: calc(7.143% - 6px); width: calc(14.286% + 12px); min-width: 0;">2天</span>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px);"></span>
+            </div>
+            <div class="symptom-row">
+              <div class="symptom-label">腹泻</div>
+              <span class="symptom-event is-pill" style="left: calc(64.286% - 6px); width: calc(14.286% + 12px); min-width: 0;">2天</span>
+            </div>
+            <div class="symptom-row">
+              <div class="symptom-label">失眠</div>
+              <span class="symptom-event is-dot" style="left: calc(7.143% - 6px);"></span>
+              <span class="symptom-event is-dot" style="left: calc(35.714% - 6px);"></span>
+            </div>
+            <div class="symptom-row">
+              <div class="symptom-label">出冷汗</div>
+              <span class="symptom-event is-dot" style="left: calc(50% - 6px);"></span>
+            </div>
+            <div class="symptom-row">
+              <div class="symptom-label">头痛</div>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px);"></span>
+            </div>
+            <div class="symptom-dates">
+              <span>5/15</span>
+              <span>5/16</span>
+              <span>5/17</span>
+              <span>5/18</span>
+              <span>5/19</span>
+              <span>5/20</span>
+              <span>今天</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="pager">
+        <button class="switch-button pager-button" type="button" data-target="forecast">经期日历</button>
+        <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
+        <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
+        <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
+        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
+      </div>
+      <button class="play-button symptom-play-button chart-play-button" type="button">播放</button>
     </section>
   </div>
   <script>
@@ -1374,13 +1688,21 @@
     const barPlayButton = document.querySelector(".bar-play-button");
     const walkPanel = document.querySelector(".walk-panel");
     const walkPlayButton = document.querySelector(".walk-play-button");
+    const symptomPanel = document.querySelector(".symptom-panel");
+    const symptomPlayButton = document.querySelector(".symptom-play-button");
 
     function setCardText(card, value) {
-      const displayMain = card.querySelector(".card-display .value-main");
-      displayMain.textContent = value;
+      card.querySelector(".card-display-top .value-main").textContent = value;
+      card.querySelector(".card-display-bottom .value-main").textContent = value;
+    }
+
+    function setCardSplitText(card, topValue, bottomValue) {
+      card.querySelector(".card-display-top .value-main").textContent = topValue;
+      card.querySelector(".card-display-bottom .value-main").textContent = bottomValue;
     }
 
     function prepareFlip(card, currentValue, nextValue) {
+      setCardSplitText(card, nextValue, currentValue);
       card.querySelector(".flip-top .value-main").textContent = currentValue;
       card.querySelector(".flip-bottom .value-main").textContent = nextValue;
     }
@@ -1401,9 +1723,6 @@
       return new Promise((resolve) => {
         setTimeout(() => {
           setCardText(card, nextValue);
-        }, duration / 2);
-
-        setTimeout(() => {
           card.dataset.index = String(nextIndex);
           card.classList.remove("is-flipping");
           resolve();
@@ -1422,7 +1741,12 @@
       }
 
       const customDuration = Number(card.dataset.duration || 0);
+      const startDelay = Number(card.dataset.startDelay || 0);
       const perFlipDuration = customDuration || Math.max(120, Math.round(totalDuration / steps));
+
+      if (startDelay > 0) {
+        await wait(startDelay);
+      }
 
       for (let i = 0; i < steps; i += 1) {
         await flipCard(card, perFlipDuration);
@@ -1493,10 +1817,31 @@
       }
     }
 
+    function setSymptomVisualState(state, options = {}) {
+      if (!symptomPanel) {
+        return;
+      }
+
+      if (options.immediate) {
+        symptomPanel.classList.add("no-transition");
+      }
+
+      symptomPanel.classList.toggle("is-empty", state === "empty");
+      symptomPanel.classList.toggle("is-shell", state === "shell");
+      symptomPanel.dataset.state = state;
+
+      if (options.immediate) {
+        void symptomPanel.offsetWidth;
+        symptomPanel.classList.remove("no-transition");
+      }
+    }
+
     let barHasPlayed = false;
     let barAnimating = false;
     let walkHasPlayed = false;
     let walkAnimating = false;
+    let symptomHasPlayed = false;
+    let symptomAnimating = false;
 
     async function playBarChart() {
       if (!barPanel || !barPlayButton || barAnimating) {
@@ -1554,6 +1899,33 @@
       walkAnimating = false;
     }
 
+    async function playSymptomChart() {
+      if (!symptomPanel || !symptomPlayButton || symptomAnimating) {
+        return;
+      }
+
+      symptomAnimating = true;
+      symptomPlayButton.disabled = true;
+
+      if (!symptomHasPlayed) {
+        setSymptomVisualState("empty", { immediate: true });
+        setSymptomVisualState("shell");
+        await wait(300);
+        setSymptomVisualState("final");
+        await wait(1160);
+        symptomHasPlayed = true;
+        symptomPlayButton.textContent = "还原";
+      } else {
+        setSymptomVisualState("empty");
+        await wait(360);
+        symptomHasPlayed = false;
+        symptomPlayButton.textContent = "播放";
+      }
+
+      symptomPlayButton.disabled = false;
+      symptomAnimating = false;
+    }
+
     switchButtons.forEach((button) => {
       button.addEventListener("click", () => {
         showScreen(button.dataset.target);
@@ -1580,8 +1952,16 @@
       });
     }
 
+    if (symptomPlayButton) {
+      symptomPlayButton.addEventListener("click", () => {
+        playSymptomChart();
+      });
+    }
+
     setBarVisualState("empty", { immediate: true });
     setWalkVisualState("empty", { immediate: true });
+    setSymptomVisualState("empty", { immediate: true });
+    showScreen("forecast");
 
     function setActiveSignal(target, options = {}) {
       const { highlightText = true } = options;
