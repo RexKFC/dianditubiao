@@ -1103,7 +1103,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      border-bottom: 0.5px dashed #e8e8e8;
+      border-bottom: 1px dashed #e8e8e8;
     }
 
     .symptom-label {
@@ -1146,7 +1146,7 @@
       transform: translateY(-50%) scaleX(1);
       transform-origin: left center;
       transition-property: transform, opacity;
-      transition-duration: 500ms, 160ms;
+      transition-duration: 260ms, 160ms;
       transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1), ease;
       transition-delay: var(--event-delay, 0ms), var(--event-delay, 0ms);
     }
@@ -1157,7 +1157,7 @@
       border-radius: 50%;
       transform: translateY(-50%) scale(1);
       transition-property: transform, opacity;
-      transition-duration: 300ms, 140ms;
+      transition-duration: 220ms, 140ms;
       transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1), ease;
       transition-delay: var(--event-delay, 0ms), var(--event-delay, 0ms);
     }
@@ -1257,7 +1257,7 @@
     .weight-panel {
       position: relative;
       width: 304px;
-      height: 116px;
+      height: 130px;
       padding: 8px;
       background: #fafafa;
       border-radius: 12px;
@@ -1268,63 +1268,61 @@
       position: relative;
       width: 100%;
       height: 100%;
-      padding: 4px 8px 16px 32px;
+      padding: 10px 8px 28px 40px;
     }
 
     .weight-grid-lines {
       position: absolute;
-      left: 32px;
+      left: 40px;
       right: 8px;
-      top: 4px;
-      height: 80px;
+      top: 10px;
+      bottom: 28px;
+      display: grid;
+      grid-template-rows: repeat(5, 1fr);
       pointer-events: none;
     }
 
     .weight-grid-lines span {
-      position: absolute;
-      left: 0;
-      right: 0;
-      border-top: 0.5px dashed #e8e8e8;
+      border-top: 1px dashed #e8e8e8;
     }
 
-    .weight-grid-lines span:nth-child(1) { top: 8px; }
-    .weight-grid-lines span:nth-child(2) { top: 24px; }
-    .weight-grid-lines span:nth-child(3) { top: 40px; }
-    .weight-grid-lines span:nth-child(4) { top: 56px; }
-    .weight-grid-lines span:nth-child(5) { top: 72px; }
+    .weight-grid-lines span:last-child {
+      border-bottom: 1px dashed #e8e8e8;
+    }
 
     .weight-values {
       position: absolute;
-      top: 4px;
-      left: 0;
+      top: 10px;
+      left: 8px;
+      bottom: 28px;
       width: 32px;
-      height: 80px;
       padding-right: 4px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
+      display: grid;
+      grid-template-rows: repeat(5, 1fr);
+      align-items: start;
       color: #aaaaaf;
       font-size: 11px;
       font-weight: 400;
       line-height: 1;
       text-align: right;
-      transition: opacity 300ms ease;
     }
 
     .weight-values span {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      height: 16px;
+      transform: translateY(-5px);
+    }
+
+    .weight-values span:last-child {
+      transform: translateY(-1px);
     }
 
     .weight-svg {
       position: absolute;
-      left: 32px;
+      left: 40px;
       right: 8px;
-      top: 4px;
-      width: calc(100% - 40px);
-      height: 80px;
+      top: 10px;
+      bottom: 28px;
+      width: calc(100% - 48px);
+      height: calc(100% - 38px);
       overflow: visible;
     }
 
@@ -1334,16 +1332,10 @@
       stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: stroke-dashoffset 0.75s 0.6s;
     }
 
     .weight-dot {
       fill: #ff71a0;
-      transform-box: fill-box;
-      transform-origin: center;
-      transition-property: opacity, transform;
-      transition-duration: 0.18s, 0.28s;
-      transition-timing-function: ease, cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .weight-current {
@@ -1352,85 +1344,21 @@
       font-weight: 400;
       text-anchor: end;
       dominant-baseline: middle;
-      transition: opacity 220ms ease;
     }
 
     .weight-dates {
       position: absolute;
-      left: 32px;
+      left: 40px;
       right: 8px;
       bottom: 0;
-      height: 16px;
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      align-items: center;
+      align-items: end;
       color: #aaaaaf;
       font-size: 11px;
       font-weight: 400;
       line-height: 1;
       text-align: center;
-      transition: opacity 300ms ease;
-    }
-
-    .weight-dot:nth-of-type(1) { transition-delay: 0ms, 0ms; }
-    .weight-dot:nth-of-type(2) { transition-delay: 145ms, 145ms; }
-    .weight-dot:nth-of-type(3) { transition-delay: 290ms, 290ms; }
-    .weight-dot:nth-of-type(4) { transition-delay: 435ms, 435ms; }
-    .weight-dot:nth-of-type(5) { transition-delay: 580ms, 580ms; }
-    .weight-dot:nth-of-type(6) { transition-delay: 725ms, 725ms; }
-    .weight-dot:nth-of-type(7) { transition-delay: 870ms, 870ms; }
-
-    .weight-current {
-      transition-delay: 1080ms;
-    }
-
-    .weight-panel.is-empty {
-      background: transparent;
-    }
-
-    .weight-panel.is-empty .weight-chart,
-    .weight-panel.is-empty .weight-grid-lines,
-    .weight-panel.is-empty .weight-dates,
-    .weight-panel.is-empty .weight-values,
-    .weight-panel.is-empty .weight-current,
-    .weight-panel.is-empty .weight-dot {
-      opacity: 0;
-    }
-
-    .weight-panel.is-empty .weight-line {
-      stroke-dashoffset: var(--weight-line-length, 0);
-    }
-
-    .weight-panel.is-empty .weight-dot {
-      transform: scale(0);
-    }
-
-    .weight-panel.is-shell {
-      background: #fafafa;
-    }
-
-    .weight-panel.is-shell .weight-chart,
-    .weight-panel.is-shell .weight-grid-lines,
-    .weight-panel.is-shell .weight-dates {
-      opacity: 1;
-    }
-
-    .weight-panel.is-shell .weight-current,
-    .weight-panel.is-shell .weight-dot {
-      opacity: 0;
-    }
-
-    .weight-panel.is-shell .weight-line {
-      stroke-dashoffset: var(--weight-line-length, 0);
-    }
-
-    .weight-panel.is-shell .weight-dot {
-      transform: scale(0);
-    }
-
-    .weight-panel.no-transition,
-    .weight-panel.no-transition * {
-      transition: none !important;
     }
 
     @keyframes flipTop {
@@ -1828,25 +1756,25 @@
           <div class="symptom-grid">
             <div class="symptom-row">
               <div class="symptom-label">腹痛难忍</div>
-              <span class="symptom-event is-pill" style="left: calc(7.143% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 0ms;">2天</span>
-              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 580ms;"></span>
+              <span class="symptom-event is-pill" style="left: calc(7.143% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 120ms;">2天</span>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 480ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">腹泻</div>
-              <span class="symptom-event is-pill" style="left: calc(64.286% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 435ms;">2天</span>
+              <span class="symptom-event is-pill" style="left: calc(64.286% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 280ms;">2天</span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">失眠</div>
               <span class="symptom-event is-dot" style="left: calc(7.143% - 6px); --event-delay: 0ms;"></span>
-              <span class="symptom-event is-dot" style="left: calc(35.714% - 6px); --event-delay: 145ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(35.714% - 6px); --event-delay: 160ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">出冷汗</div>
-              <span class="symptom-event is-dot" style="left: calc(50% - 6px); --event-delay: 290ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(50% - 6px); --event-delay: 320ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">头痛</div>
-              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 580ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 560ms;"></span>
             </div>
             <div class="symptom-dates">
               <span>5/15</span>
@@ -1872,13 +1800,14 @@
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
         <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 300ms 渐显展示空壳图表。</p>
+          <p class="screen-notes-item">1. 默认进入全空白状态；点击播放后，先用 300ms 渐显展示空壳图表。</p>
           <p class="screen-notes-item">2. 空壳图表只显示浅灰背景、虚线分割线和底部日期轴，不显示 Y 轴文案、红点和胶囊。</p>
           <p class="screen-notes-item">3. 进入内容绘制阶段后，Y 轴 5 条文案会一起渐显出现，不做位移。</p>
-          <p class="screen-notes-item">4. 红点按 X 轴从左到右依次放大出现，使用 scale 放大动效；单颗红点的放大时长为 300ms，透明度渐显时长为 140ms；延迟节奏参考体重图表，按 0ms、145ms、290ms、435ms、580ms 依次推进，同一天的内容共用同一个时点。</p>
-          <p class="screen-notes-item">5. 胶囊使用从左向右的 stretch 动效出现，横向伸展时长为 500ms，透明度渐显时长为 160ms，动画曲线为 cubic-bezier(0.16, 1, 0.3, 1)。</p>
-          <p class="screen-notes-item">6. 当前时间顺序为：失眠 5/15 红点 + 腹痛难忍胶囊 -&gt; 失眠 5/17 红点 -&gt; 出冷汗 5/18 红点 -&gt; 腹泻胶囊 -&gt; 头痛 今天红点 + 腹痛难忍 今天红点。</p>
+          <p class="screen-notes-item">4. 红点按 X 轴从左到右依次放大出现，使用 scale 放大动效；同列元素按 DOM 顺序继续播放。</p>
+          <p class="screen-notes-item">5. 胶囊使用从左向右的 stretch 动效出现，动画曲线为 cubic-bezier(0.16, 1, 0.3, 1)。</p>
+          <p class="screen-notes-item">6. 当前时间顺序为：失眠 5/15 红点 -&gt; 腹痛难忍胶囊 -&gt; 失眠 5/17 红点 -&gt; 腹泻胶囊 -&gt; 出冷汗 5/18 红点 -&gt; 腹痛难忍 今天红点 -&gt; 头痛 今天红点。</p>
           <p class="screen-notes-item">7. 红点之间按既定节奏依次衔接，胶囊插入同一时间轴中，不额外单独分段。</p>
+          <p class="screen-notes-item">8. 再次点击按钮后，图表整体还原为全空白状态。</p>
         </div>
       </div>
     </section>
@@ -1901,16 +1830,16 @@
               <span>52.0</span>
               <span>51.5</span>
             </div>
-            <svg class="weight-svg" viewBox="0 0 264 80" preserveAspectRatio="xMinYMin meet" aria-hidden="true">
-              <path class="weight-line" d="M 18.9 40 L 56.6 56 L 94.3 24 L 132 36 L 169.7 18 L 207.4 19 L 245.1 24" />
-              <circle class="weight-dot" cx="18.9" cy="40" r="4.5" />
-              <circle class="weight-dot" cx="56.6" cy="56" r="4.5" />
-              <circle class="weight-dot" cx="94.3" cy="24" r="4.5" />
-              <circle class="weight-dot" cx="132" cy="36" r="4.5" />
-              <circle class="weight-dot" cx="169.7" cy="18" r="4.5" />
-              <circle class="weight-dot" cx="207.4" cy="19" r="4.5" />
-              <circle class="weight-dot" cx="245.1" cy="24" r="4.5" />
-              <text class="weight-current" x="256" y="12">52.3公斤</text>
+            <svg class="weight-svg" viewBox="0 0 232 84" preserveAspectRatio="none" aria-hidden="true">
+              <path class="weight-line" d="M 8 45.6 L 46.7 67.2 L 85.3 24 L 124 38.4 L 162.7 16.8 L 201.3 17.6 L 224 24" />
+              <circle class="weight-dot" cx="8" cy="45.6" r="4.5" />
+              <circle class="weight-dot" cx="46.7" cy="67.2" r="4.5" />
+              <circle class="weight-dot" cx="85.3" cy="24" r="4.5" />
+              <circle class="weight-dot" cx="124" cy="38.4" r="4.5" />
+              <circle class="weight-dot" cx="162.7" cy="16.8" r="4.5" />
+              <circle class="weight-dot" cx="201.3" cy="17.6" r="4.5" />
+              <circle class="weight-dot" cx="224" cy="24" r="4.5" />
+              <text class="weight-current" x="226" y="7">52.3公斤</text>
             </svg>
             <div class="weight-dates">
               <span>5/14</span>
@@ -1932,18 +1861,6 @@
         <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
         <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
       </div>
-      <button class="play-button weight-play-button chart-play-button" type="button">播放</button>
-      <div class="screen-notes">
-        <p class="screen-notes-title">动效说明</p>
-        <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 默认进入全空白状态；300ms 渐显展示空壳图表。</p>
-          <p class="screen-notes-item">2. 空壳图表只显示浅灰背景、0.5px 虚线分割线、左侧 Y 轴数值和底部日期轴，不显示折线、红点和右上角结果值。</p>
-          <p class="screen-notes-item">3. 进入内容绘制阶段后，7 个红点会按时间从左到右依次出现；单颗红点使用 scale 放大动效，透明度渐显时长为 0.18s，放大时长为 0.28s，动画曲线为 cubic-bezier(0.22, 1, 0.36, 1)。</p>
-          <p class="screen-notes-item">4. 红点不是同时出现，而是依次播放；播放顺序固定为 5/14 -&gt; 5/15 -&gt; 5/16 -&gt; 5/17 -&gt; 5/18 -&gt; 5/19 -&gt; 今天，最后一个红点延迟到 0.87s。</p>
-          <p class="screen-notes-item">5. 第 5 个红点开始出现时，折线就会同步开始连贯绘制；折线绘制时长为 0.75s，开始延迟为 0.6s。</p>
-          <p class="screen-notes-item">6. 右上角结果值“52.3公斤”会在折线阶段靠后渐显出现，用来衔接折线尾部，不早于主要连线节奏。</p>
-        </div>
-      </div>
     </section>
   </div>
   <script>
@@ -1959,10 +1876,6 @@
     const walkPlayButton = document.querySelector(".walk-play-button");
     const symptomPanel = document.querySelector(".symptom-panel");
     const symptomPlayButton = document.querySelector(".symptom-play-button");
-    const weightPanel = document.querySelector(".weight-panel");
-    const weightPlayButton = document.querySelector(".weight-play-button");
-    const weightLine = document.querySelector(".weight-line");
-    const weightDots = Array.from(document.querySelectorAll(".weight-dot"));
 
     function setCardText(card, value) {
       card.querySelector(".card-display-top .value-main").textContent = value;
@@ -2109,42 +2022,12 @@
       }
     }
 
-    function setWeightVisualState(state, options = {}) {
-      if (!weightPanel) {
-        return;
-      }
-
-      const lineLength = Number.parseFloat(
-        weightPanel.style.getPropertyValue("--weight-line-length") || "0"
-      );
-
-      if (options.immediate) {
-        weightPanel.classList.add("no-transition");
-      }
-
-      weightPanel.classList.toggle("is-empty", state === "empty");
-      weightPanel.classList.toggle("is-shell", state === "shell");
-      weightPanel.dataset.state = state;
-
-      if (weightLine) {
-        weightLine.style.strokeDashoffset =
-          state === "final" ? "0" : `${lineLength}`;
-      }
-
-      if (options.immediate) {
-        void weightPanel.offsetWidth;
-        weightPanel.classList.remove("no-transition");
-      }
-    }
-
     let barHasPlayed = false;
     let barAnimating = false;
     let walkHasPlayed = false;
     let walkAnimating = false;
     let symptomHasPlayed = false;
     let symptomAnimating = false;
-    let weightHasPlayed = false;
-    let weightAnimating = false;
 
     async function playBarChart() {
       if (!barPanel || !barPlayButton || barAnimating) {
@@ -2229,33 +2112,6 @@
       symptomAnimating = false;
     }
 
-    async function playWeightChart() {
-      if (!weightPanel || !weightPlayButton || weightAnimating) {
-        return;
-      }
-
-      weightAnimating = true;
-      weightPlayButton.disabled = true;
-
-      if (!weightHasPlayed) {
-        setWeightVisualState("empty", { immediate: true });
-        setWeightVisualState("shell");
-        await wait(300);
-        setWeightVisualState("final");
-        await wait(1020);
-        weightHasPlayed = true;
-        weightPlayButton.textContent = "还原";
-      } else {
-        setWeightVisualState("empty");
-        await wait(360);
-        weightHasPlayed = false;
-        weightPlayButton.textContent = "播放";
-      }
-
-      weightPlayButton.disabled = false;
-      weightAnimating = false;
-    }
-
     switchButtons.forEach((button) => {
       button.addEventListener("click", () => {
         showScreen(button.dataset.target);
@@ -2288,28 +2144,10 @@
       });
     }
 
-    if (weightPlayButton) {
-      weightPlayButton.addEventListener("click", () => {
-        playWeightChart();
-      });
-    }
-
     setBarVisualState("empty", { immediate: true });
     setWalkVisualState("empty", { immediate: true });
     setSymptomVisualState("empty", { immediate: true });
-    if (weightLine) {
-      const weightLineLength = weightLine.getTotalLength();
-      weightLine.style.strokeDasharray = `${weightLineLength}`;
-      weightLine.style.strokeDashoffset = `${weightLineLength}`;
-      if (weightPanel) {
-        weightPanel.style.setProperty("--weight-line-length", `${weightLineLength}`);
-      }
-    }
-    weightDots.forEach((dot) => {
-      dot.style.opacity = "1";
-    });
-    setWeightVisualState("empty", { immediate: true });
-    showScreen("weight");
+    showScreen("bar");
 
     function setActiveSignal(target, options = {}) {
       const { highlightText = true } = options;
