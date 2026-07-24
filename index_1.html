@@ -429,6 +429,86 @@
       margin: 0 0 6px;
     }
 
+    .screen-notes-table-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .screen-notes-table-wrap {
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .screen-notes-table-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .screen-notes-table-scrollbar {
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.92);
+      scrollbar-gutter: stable;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .screen-notes-table-scrollbar::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .screen-notes-table-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 999px;
+    }
+
+    .screen-notes-table-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 999px;
+    }
+
+    .screen-notes-table-scrollbar-inner {
+      height: 1px;
+    }
+
+    .screen-notes-table {
+      width: 100%;
+      min-width: 640px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 11px;
+      line-height: 1.45;
+      color: #7f7f86;
+      background: #ffffff;
+      border: 1px solid #e8e8e8;
+    }
+
+    .screen-notes-table th,
+    .screen-notes-table td {
+      padding: 8px;
+      border: 1px solid #e8e8e8;
+      vertical-align: top;
+      text-align: left;
+      word-break: break-word;
+    }
+
+    .screen-notes-table th {
+      color: #353535;
+      font-weight: 500;
+      background: #fafafa;
+    }
+
+    .screen-symptom .screen-notes,
+    .screen-weight .screen-notes {
+      max-height: 250px;
+    }
+
     .play-button:disabled {
       opacity: 0.7;
       cursor: default;
@@ -1076,6 +1156,8 @@
       background: #fafafa;
       border-radius: 12px;
       overflow: hidden;
+      --symptom-content-ease: linear;
+      --symptom-content-fade-ease: linear;
     }
 
     .symptom-grid {
@@ -1143,11 +1225,11 @@
       border-radius: 6px;
       line-height: 12px;
       text-align: right;
-      transform: translateY(-50%) scaleX(1);
-      transform-origin: left center;
-      transition-property: transform, opacity;
-      transition-duration: 500ms, 160ms;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1), ease;
+      overflow: hidden;
+      transform: translateY(-50%);
+      transition-property: width, opacity;
+      transition-duration: 200ms, 50ms;
+      transition-timing-function: var(--symptom-content-ease), var(--symptom-content-fade-ease);
       transition-delay: var(--event-delay, 0ms), var(--event-delay, 0ms);
     }
 
@@ -1157,8 +1239,8 @@
       border-radius: 50%;
       transform: translateY(-50%) scale(1);
       transition-property: transform, opacity;
-      transition-duration: 300ms, 140ms;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1), ease;
+      transition-duration: 150ms, 50ms;
+      transition-timing-function: var(--symptom-content-ease), var(--symptom-content-fade-ease);
       transition-delay: var(--event-delay, 0ms), var(--event-delay, 0ms);
     }
 
@@ -1200,7 +1282,7 @@
     }
 
     .symptom-panel.is-empty .symptom-event.is-pill {
-      transform: translateY(-50%) scaleX(0);
+      width: 12px !important;
     }
 
     .symptom-panel.is-empty .symptom-event.is-dot {
@@ -1222,7 +1304,7 @@
     }
 
     .symptom-panel.is-shell .symptom-label {
-      opacity: 0;
+      opacity: 1;
     }
 
     .symptom-panel.is-shell .symptom-dates {
@@ -1234,7 +1316,7 @@
     }
 
     .symptom-panel.is-shell .symptom-event.is-pill {
-      transform: translateY(-50%) scaleX(0);
+      width: 12px !important;
     }
 
     .symptom-panel.is-shell .symptom-event.is-dot {
@@ -1334,16 +1416,16 @@
       stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: stroke-dashoffset 0.75s 0.6s;
+      transition: stroke-dashoffset 700ms 200ms;
     }
 
     .weight-dot {
       fill: #ff71a0;
       transform-box: fill-box;
       transform-origin: center;
-      transition-property: opacity, transform;
-      transition-duration: 0.18s, 0.28s;
-      transition-timing-function: ease, cubic-bezier(0.22, 1, 0.36, 1);
+      transition-property: transform;
+      transition-duration: 100ms;
+      transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .weight-current {
@@ -1372,16 +1454,16 @@
       transition: opacity 300ms ease;
     }
 
-    .weight-dot:nth-of-type(1) { transition-delay: 0ms, 0ms; }
-    .weight-dot:nth-of-type(2) { transition-delay: 145ms, 145ms; }
-    .weight-dot:nth-of-type(3) { transition-delay: 290ms, 290ms; }
-    .weight-dot:nth-of-type(4) { transition-delay: 435ms, 435ms; }
-    .weight-dot:nth-of-type(5) { transition-delay: 580ms, 580ms; }
-    .weight-dot:nth-of-type(6) { transition-delay: 725ms, 725ms; }
-    .weight-dot:nth-of-type(7) { transition-delay: 870ms, 870ms; }
+    .weight-dot:nth-of-type(1) { transition-delay: 0ms; }
+    .weight-dot:nth-of-type(2) { transition-delay: 100ms; }
+    .weight-dot:nth-of-type(3) { transition-delay: 200ms; }
+    .weight-dot:nth-of-type(4) { transition-delay: 300ms; }
+    .weight-dot:nth-of-type(5) { transition-delay: 400ms; }
+    .weight-dot:nth-of-type(6) { transition-delay: 500ms; }
+    .weight-dot:nth-of-type(7) { transition-delay: 600ms; }
 
     .weight-current {
-      transition-delay: 1080ms;
+      transition-delay: 600ms;
     }
 
     .weight-panel.is-empty {
@@ -1633,8 +1715,8 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <button class="play-button forecast-play-button" type="button">播放</button>
       <div class="forecast-notes">
@@ -1692,8 +1774,8 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <div class="signal-controls">
         <div class="signal-color-row">
@@ -1756,8 +1838,8 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <button class="play-button bar-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
@@ -1806,8 +1888,8 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <button class="play-button walk-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
@@ -1829,24 +1911,24 @@
             <div class="symptom-row">
               <div class="symptom-label">腹痛难忍</div>
               <span class="symptom-event is-pill" style="left: calc(7.143% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 0ms;">2天</span>
-              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 580ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 820ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">腹泻</div>
-              <span class="symptom-event is-pill" style="left: calc(64.286% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 435ms;">2天</span>
+              <span class="symptom-event is-pill" style="left: calc(64.286% - 6px); width: calc(14.286% + 12px); min-width: 0; --event-delay: 560ms;">2天</span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">失眠</div>
               <span class="symptom-event is-dot" style="left: calc(7.143% - 6px); --event-delay: 0ms;"></span>
-              <span class="symptom-event is-dot" style="left: calc(35.714% - 6px); --event-delay: 145ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(35.714% - 6px); --event-delay: 180ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">出冷汗</div>
-              <span class="symptom-event is-dot" style="left: calc(50% - 6px); --event-delay: 290ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(50% - 6px); --event-delay: 360ms;"></span>
             </div>
             <div class="symptom-row">
               <div class="symptom-label">头痛</div>
-              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 580ms;"></span>
+              <span class="symptom-event is-dot" style="left: calc(92.857% - 6px); --event-delay: 820ms;"></span>
             </div>
             <div class="symptom-dates">
               <span>5/15</span>
@@ -1865,20 +1947,59 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <button class="play-button symptom-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
-        <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 300ms 渐显展示空壳图表。</p>
-          <p class="screen-notes-item">2. 空壳图表只显示浅灰背景、虚线分割线和底部日期轴，不显示 Y 轴文案、红点和胶囊。</p>
-          <p class="screen-notes-item">3. 进入内容绘制阶段后，Y 轴 5 条文案会一起渐显出现，不做位移。</p>
-          <p class="screen-notes-item">4. 红点按 X 轴从左到右依次放大出现，使用 scale 放大动效；单颗红点的放大时长为 300ms，透明度渐显时长为 140ms；延迟节奏参考体重图表，按 0ms、145ms、290ms、435ms、580ms 依次推进，同一天的内容共用同一个时点。</p>
-          <p class="screen-notes-item">5. 胶囊使用从左向右的 stretch 动效出现，横向伸展时长为 500ms，透明度渐显时长为 160ms，动画曲线为 cubic-bezier(0.16, 1, 0.3, 1)。</p>
-          <p class="screen-notes-item">6. 当前时间顺序为：失眠 5/15 红点 + 腹痛难忍胶囊 -&gt; 失眠 5/17 红点 -&gt; 出冷汗 5/18 红点 -&gt; 腹泻胶囊 -&gt; 头痛 今天红点 + 腹痛难忍 今天红点。</p>
-          <p class="screen-notes-item">7. 红点之间按既定节奏依次衔接，胶囊插入同一时间轴中，不额外单独分段。</p>
+        <div class="screen-notes-table-shell">
+          <div class="screen-notes-table-wrap">
+            <table class="screen-notes-table">
+              <thead>
+                <tr>
+                  <th>对象</th>
+                  <th>出现时机</th>
+                  <th>动效属性</th>
+                  <th>时长</th>
+                  <th>补充说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1. 空壳图表</td>
+                  <td>0-300ms</td>
+                  <td>整体渐显</td>
+                  <td>300ms</td>
+                  <td>空壳阶段直接展示浅灰底板、0.5px 虚线分割线、底部日期轴和 Y 轴文案。</td>
+                </tr>
+                <tr>
+                  <td>2. 红点</td>
+                  <td>按日期从左到右推进；同一天内容同时触发</td>
+                  <td>`scale` 放大 + `opacity` 渐显</td>
+                  <td>放大 150ms；渐显 50ms</td>
+                  <td>同一天的内容共用同一个开始时点；整组红点和胶囊的开始时点按整体缓出节奏重排，采用更克制的 `ease-out` 分布感受，同时压缩后段空档，让整段更连贯。当前顺序为：失眠 5/15 + 腹痛难忍 5/15 胶囊 → 失眠 5/17 → 出冷汗 5/18 → 腹泻 5/19 胶囊 → 头痛 今天 + 腹痛难忍 今天。</td>
+                </tr>
+                <tr>
+                  <td>3. 串行时点</td>
+                  <td>0ms / 180ms / 360ms / 560ms / 820ms</td>
+                  <td>共用单时间轴</td>
+                  <td>同日并发，跨日缓出接续</td>
+                  <td>5/15 的红点和胶囊同时开始；今天的两个红点也同时开始。前半段略快、后半段略慢，但日期之间不会再拉出过长停顿，整体会更顺、更自然。</td>
+                </tr>
+                <tr>
+                  <td>4. 胶囊</td>
+                  <td>插入同一条日期时间轴串行触发</td>
+                  <td>由点横向展开为胶囊 + `opacity` 渐显</td>
+                  <td>横向伸展 200ms；渐显 50ms</td>
+                  <td>胶囊本身不单独加曲线，仍保持线性展开；缓出只作用在整组内容的起播时点分布上。如果和红点在同一天，则和该红点同时开始。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="screen-notes-table-scrollbar" aria-hidden="true">
+            <div class="screen-notes-table-scrollbar-inner"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1929,19 +2050,59 @@
         <button class="switch-button pager-button" type="button" data-target="signal">经期信号灯</button>
         <button class="switch-button pager-button" type="button" data-target="bar">来了柱状图</button>
         <button class="switch-button pager-button" type="button" data-target="walk">走了柱状图</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="symptom">症状-设计中</button>
-        <button class="switch-button pager-button is-disabled" type="button" data-target="weight">体重-设计中</button>
+        <button class="switch-button pager-button" type="button" data-target="symptom">症状</button>
+        <button class="switch-button pager-button" type="button" data-target="weight">体重</button>
       </div>
       <button class="play-button weight-play-button chart-play-button" type="button">播放</button>
       <div class="screen-notes">
         <p class="screen-notes-title">动效说明</p>
-        <div class="screen-notes-list">
-          <p class="screen-notes-item">1. 默认进入全空白状态；300ms 渐显展示空壳图表。</p>
-          <p class="screen-notes-item">2. 空壳图表只显示浅灰背景、0.5px 虚线分割线、左侧 Y 轴数值和底部日期轴，不显示折线、红点和右上角结果值。</p>
-          <p class="screen-notes-item">3. 进入内容绘制阶段后，7 个红点会按时间从左到右依次出现；单颗红点使用 scale 放大动效，透明度渐显时长为 0.18s，放大时长为 0.28s，动画曲线为 cubic-bezier(0.22, 1, 0.36, 1)。</p>
-          <p class="screen-notes-item">4. 红点不是同时出现，而是依次播放；播放顺序固定为 5/14 -&gt; 5/15 -&gt; 5/16 -&gt; 5/17 -&gt; 5/18 -&gt; 5/19 -&gt; 今天，最后一个红点延迟到 0.87s。</p>
-          <p class="screen-notes-item">5. 第 5 个红点开始出现时，折线就会同步开始连贯绘制；折线绘制时长为 0.75s，开始延迟为 0.6s。</p>
-          <p class="screen-notes-item">6. 右上角结果值“52.3公斤”会在折线阶段靠后渐显出现，用来衔接折线尾部，不早于主要连线节奏。</p>
+        <div class="screen-notes-table-shell">
+          <div class="screen-notes-table-wrap">
+            <table class="screen-notes-table">
+              <thead>
+                <tr>
+                  <th>对象</th>
+                  <th>出现时机</th>
+                  <th>动效属性</th>
+                  <th>时长</th>
+                  <th>补充说明</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1. 空壳图表</td>
+                  <td>0-300ms</td>
+                  <td>整体渐显</td>
+                  <td>300ms</td>
+                  <td>默认先展示浅灰底板、0.5px 虚线分割线、左侧 Y 轴数值和底部日期轴，不显示折线、红点和右上角结果值。</td>
+                </tr>
+                <tr>
+                  <td>2. 红点</td>
+                  <td>按 5/14 → 5/15 → 5/16 → 5/17 → 5/18 → 5/19 → 今天 依次触发</td>
+                  <td>`scale` 放大</td>
+                  <td>100ms</td>
+                  <td>红点不做渐显，单颗结束后下一颗立即接上；当前延迟时点为 0ms、100ms、200ms、300ms、400ms、500ms、600ms。</td>
+                </tr>
+                <tr>
+                  <td>3. 折线</td>
+                  <td>第 3 个红点出现时开始绘制</td>
+                  <td>`stroke-dashoffset` 连贯绘制</td>
+                  <td>700ms</td>
+                  <td>折线在主时间轴中段接入，用来承接后半段红点节奏，不额外插入停顿。</td>
+                </tr>
+                <tr>
+                  <td>4. 结果值</td>
+                  <td>与折线尾点同步</td>
+                  <td>`opacity` 渐显</td>
+                  <td>220ms</td>
+                  <td>右上角结果值“52.3公斤”跟随折线尾部一起出现，用来收尾，不单独抢先展示。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="screen-notes-table-scrollbar" aria-hidden="true">
+            <div class="screen-notes-table-scrollbar-inner"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1963,6 +2124,7 @@
     const weightPlayButton = document.querySelector(".weight-play-button");
     const weightLine = document.querySelector(".weight-line");
     const weightDots = Array.from(document.querySelectorAll(".weight-dot"));
+    const stickyNoteTables = Array.from(document.querySelectorAll(".screen-notes-table-shell"));
 
     function setCardText(card, value) {
       card.querySelector(".card-display-top .value-main").textContent = value;
@@ -2005,6 +2167,47 @@
 
     function wait(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function setupStickyNoteTables() {
+      stickyNoteTables.forEach((shell) => {
+        const wrap = shell.querySelector(".screen-notes-table-wrap");
+        const scrollbar = shell.querySelector(".screen-notes-table-scrollbar");
+        const inner = shell.querySelector(".screen-notes-table-scrollbar-inner");
+
+        if (!wrap || !scrollbar || !inner) {
+          return;
+        }
+
+        const syncWidth = () => {
+          inner.style.width = `${wrap.scrollWidth}px`;
+          scrollbar.scrollLeft = wrap.scrollLeft;
+        };
+
+        let syncingFromWrap = false;
+        let syncingFromBar = false;
+
+        wrap.addEventListener("scroll", () => {
+          if (syncingFromBar) {
+            syncingFromBar = false;
+            return;
+          }
+          syncingFromWrap = true;
+          scrollbar.scrollLeft = wrap.scrollLeft;
+        });
+
+        scrollbar.addEventListener("scroll", () => {
+          if (syncingFromWrap) {
+            syncingFromWrap = false;
+            return;
+          }
+          syncingFromBar = true;
+          wrap.scrollLeft = scrollbar.scrollLeft;
+        });
+
+        syncWidth();
+        window.addEventListener("resize", syncWidth);
+      });
     }
 
     async function runCardSteps(card, steps, totalDuration) {
@@ -2215,7 +2418,7 @@
         setSymptomVisualState("shell");
         await wait(300);
         setSymptomVisualState("final");
-        await wait(1160);
+        await wait(1100);
         symptomHasPlayed = true;
         symptomPlayButton.textContent = "还原";
       } else {
@@ -2299,8 +2502,9 @@
     setSymptomVisualState("empty", { immediate: true });
     if (weightLine) {
       const weightLineLength = weightLine.getTotalLength();
-      weightLine.style.strokeDasharray = `${weightLineLength}`;
-      weightLine.style.strokeDashoffset = `${weightLineLength}`;
+    weightLine.style.strokeDasharray = `${weightLineLength}`;
+    weightLine.style.strokeDashoffset = `${weightLineLength}`;
+    setupStickyNoteTables();
       if (weightPanel) {
         weightPanel.style.setProperty("--weight-line-length", `${weightLineLength}`);
       }
