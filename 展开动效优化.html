@@ -555,7 +555,7 @@
             schedule(typeNextCharacter, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
           } else {
             syncTypedHeight();
-            schedule(slideToSignalPage, 300);
+            schedule(slideToSignalPage, 500);
           }
         };
         typeNextCharacter();
