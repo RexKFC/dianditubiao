@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展开动效优化</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      display: grid;
+      place-items: start center;
+      background: #e6e6e9;
+    }
+    .page {
+      width: 402px;
+      min-width: 402px;
+      max-width: 402px;
+      height: 874px;
+      position: relative;
+      overflow: hidden;
+      background: #f2f2f6;
+    }
+    .page img { position: absolute; display: block; user-select: none; -webkit-user-drag: none; }
+    .header { z-index: 2; top: 0; left: 0; width: 402px; height: 106px; }
+    .content {
+      position: absolute;
+      top: 106px;
+      bottom: 83px;
+      left: 12px;
+      right: 0;
+      border-left: 1px solid #dedee3;
+    }
+    .panel { z-index: 3; left: -8px; bottom: 71px; width: 418px; height: 182px; }
+    .tabbar { z-index: 4; left: 0; bottom: 0; width: 402px; height: 83px; }
+    .play-demo {
+      position: absolute;
+      z-index: 5;
+      top: 70px;
+      right: 16px;
+      padding: 7px 12px;
+      border: 0;
+      border-radius: 18px;
+      background: #ff4085;
+      color: #fff;
+      font: 500 12px/1.2 "PingFang SC", "Microsoft YaHei", sans-serif;
+      cursor: pointer;
+    }
+    .play-demo:hover { background: #ed3175; }
+    .play-demo:active { transform: scale(0.96); }
+    .play-demo:focus-visible { outline: 2px solid #a51c51; outline-offset: 3px; }
+    .content { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: #333; }
+    .demo-record[hidden] { display: none; }
+    .date { position: absolute; top: 12px; left: 11px; display: flex; align-items: center; gap: 6px; height: 30px; }
+    .date::before { content: ""; position: absolute; left: -16px; width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(#ff9fce, #ff4592); }
+    .date strong { font-size: 22px; font-weight: 600; }
+    .date span { color: #999; font-size: 13px; }
+    .record-card { position: absolute; top: 49px; left: 11px; width: 366px; height: 375px; border-radius: 12px; background: #fff; }
+    .record-card::before { content: ""; position: absolute; left: -15px; top: 19px; width: 6px; height: 6px; border-radius: 50%; background: #ccc; }
+    .record-card { transform-origin: top left; }
+    .summary-char { animation: summary-char-opacity 180ms ease both; }
+    @keyframes summary-char-opacity { from { opacity: 0; } to { opacity: 1; } }
+    .time { position: absolute; top: 14px; left: 12px; font-size: 15px; color: #999; }
+    .period { position: absolute; top: 54px; left: 12px; display: flex; align-items: center; gap: 12px; font-size: 17px; line-height: 24px; }
+    .period svg { width: 18px; height: 24px; }
+    .divider { position: absolute; top: 89px; left: 12px; right: 12px; height: .5px; background: #E8E8E8; }
+    .analysis-title { position: absolute; top: 100px; left: 12px; right: 12px; display: flex; align-items: center; gap: 6px; font-size: 17px; font-weight: 600; line-height: 22px; }
+    .analysis-title svg { width: 18px; height: 20px; }
+    .chevron { margin-left: auto; width: 9px; height: 9px; border-top: 1.5px solid #ccc; border-left: 1.5px solid #ccc; transform: rotate(45deg); }
+    .chart { position: absolute; top: 133px; left: 12px; right: 12px; height: 152px; border-radius: 8px; background: #fafafa; }
+    .chart h2 { position: absolute; top: 8px; left: 8px; margin: 0; font-size: 17px; font-weight: 600; }
+    .chart-row { position: absolute; left: 8px; right: 8px; height: 18px; display: flex; align-items: center; font-size: 11px; }
+    .chart-row:nth-of-type(1) { top: 55px; }
+    .chart-row:nth-of-type(2) { top: 87px; }
+    .chart-row:nth-of-type(3) { top: 119px; }
+    .cycle-label { width: 36px; text-align: right; color: #999; }
+    .cycle-status { width: 64px; padding-left: 8px; }
+    .bar { height: 18px; background: #ff68a2; border-radius: 0 4px 4px 0; color: #fff; text-align: right; padding-right: 4px; line-height: 18px; }
+    .bar { transform-origin: left center; }
+    .bar-value { display: inline-block; }
+    .summary { position: absolute; top: 294px; left: 12px; right: 12px; margin: 0; font-size: 17px; line-height: 27px; letter-spacing: -.35px; }
+    .summary em { font-style: normal; color: #ff4085; }
+    .pagination { position: absolute; top: 355px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+    .pagination span { width: 8px; height: 8px; border-radius: 50%; background: #f2f2f6; }
+    .pagination span.is-active { background: #ff68a2; }
+    .pagination span { cursor: pointer; }
+    .analysis-viewport { touch-action: pan-y; user-select: none; }
+    .analysis-viewport { position: absolute; top: 133px; left: 12px; right: 12px; bottom: 0; overflow: hidden; }
+    .analysis-page { position: absolute; inset: 0; }
+    .analysis-page[hidden] { display: none; }
+    .analysis-page .chart { top: 0; left: 0; right: 0; }
+    .analysis-page .summary { top: 161px; left: 0; right: 0; }
+    .cycle-page .chart h2, .cycle-page .summary { font-size: 17px; }
+    .signal-list { position: absolute; top: 48px; left: 8px; right: 8px; display: grid; grid-template-columns: repeat(4, 1fr); }
+    .signal-item { text-align: center; color: #ccc; }
+    .signal-light { position: relative; margin: 0 auto 9px; width: 36px; height: 36px; border-radius: 50%; background: #ededed; }
+    .signal-light-off, .signal-light-on { position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; transition: opacity 220ms ease, filter 260ms ease; }
+    .signal-light-off { background-image: url('切图/默认.png'); }
+    .signal-light-on { opacity: 0; filter: saturate(.72) brightness(.9); }
+    .signal-item.is-lit .signal-light-on { opacity: 1; filter: saturate(1.04) brightness(1.04); animation: signal-fade-in 250ms ease-out; }
+    .signal-item.is-active { color: #333; }
+    @keyframes signal-fade-in {
+      from { opacity: 0; filter: saturate(.72) brightness(.9); }
+      to { opacity: 1; filter: saturate(1.04) brightness(1.04); }
+    }
+    .signal-name { font-size: 13px; line-height: 18px; white-space: nowrap; }
+    .signal-meta { margin-top: 2px; font-size: 11px; line-height: 15px; }
+    .is-active .signal-meta { color: #999; }
+  </style>
+</head>
+<body>
+  <main class="page" aria-label="点滴，展开动效优化">
+    <img class="header" src="切图/头部.png" alt="状态栏，9:41，点滴">
+    <button class="play-demo" type="button" aria-controls="demo-record" aria-expanded="false">播放演示</button>
+    <section class="content" aria-label="记录内容">
+      <div class="demo-record" id="demo-record" hidden>
+        <div class="date"><strong>5月20日</strong><span>周五</span></div>
+        <article class="record-card" aria-label="13:20 月经来了，本次周期分析">
+          <time class="time">13:20</time>
+          <div class="period">
+            <svg viewBox="0 0 36 48" aria-hidden="true"><defs><linearGradient id="drop" x2="0" y2="1"><stop stop-color="#ff9dcb"/><stop offset="1" stop-color="#ff4085"/></linearGradient></defs><path fill="url(#drop)" d="M18 3C13 3 2 20 2 29a16 16 0 0 0 32 0C34 20 23 3 18 3Z"/><path d="M10 30q8 9 16 0" fill="none" stroke="white" stroke-width="5" stroke-linecap="round"/></svg>
+            <span>月经来了</span>
+          </div>
+          <div class="divider"></div>
+          <div class="analysis-title">
+            <svg viewBox="0 0 36 40" aria-hidden="true"><path fill="#ff635e" d="m14 0 4 11 10 4-10 4-4 11-4-11L0 15l10-4Z"/><path fill="#fa3aca" d="m27 20 3 7 6 3-6 3-3 7-3-7-7-3 7-3Z"/></svg>
+            <span>本次周期分析</span><span class="chevron" aria-hidden="true"></span>
+          </div>
+          <div class="analysis-viewport">
+            <section class="analysis-page cycle-page" aria-label="最近3个周期">
+          <div class="chart" aria-label="最近3个周期：上上次30天，准时；上次31天，准时；本次29天，推迟2天">
+            <h2>最近3个周期</h2>
+            <div class="chart-row"><span class="cycle-label">上上次</span><span class="cycle-status">准时</span><span class="bar" style="width:214px"><span class="bar-value">30天</span></span></div>
+            <div class="chart-row"><span class="cycle-label">上次</span><span class="cycle-status">准时</span><span class="bar" style="width:226px"><span class="bar-value">31天</span></span></div>
+            <div class="chart-row"><span class="cycle-label">本次</span><span class="cycle-status">推迟2天</span><span class="bar" style="width:160px"><span class="bar-value">29天</span></span></div>
+          </div>
+          <p class="summary">你最近三次周期分别是<em>30天、31天、29天</em>，整体波动幅度很小，属于<em>非常规律</em>的状态。</p>
+            </section>
+            <section class="analysis-page signal-page" aria-label="月经信号灯" hidden aria-hidden="true">
+              <div class="chart signal-chart">
+                <h2>月经信号灯</h2>
+                <div class="signal-list">
+                  <div class="signal-item" data-signal="stable"><div class="signal-light" role="img" aria-label="稳定，未点亮"><span class="signal-light-off"></span><span class="signal-light-on" style="background-image: url('切图/稳定.png')"></span></div><div class="signal-name">稳定</div><div class="signal-meta">21–35天</div></div>
+                  <div class="signal-item" data-signal="mild"><div class="signal-light" role="img" aria-label="轻度波动，未点亮"><span class="signal-light-off"></span><span class="signal-light-on" style="background-image: url('切图/轻度波动.png')"></span></div><div class="signal-name">轻度波动</div><div class="signal-meta">15–20或36–90<br>天</div></div>
+                  <div class="signal-item" data-signal="strong"><div class="signal-light" role="img" aria-label="明显波动，未点亮"><span class="signal-light-off"></span><span class="signal-light-on" style="background-image: url('切图/明显波动.png')"></span></div><div class="signal-name">明显波动</div><div class="signal-meta">15–17天<br>46–90天</div></div>
+                  <div class="signal-item" data-signal="watch"><div class="signal-light" role="img" aria-label="建议关注，未点亮"><span class="signal-light-off"></span><span class="signal-light-on" style="background-image: url('切图/建议关注.png')"></span></div><div class="signal-name">建议关注</div><div class="signal-meta">&lt;15天<br>&gt;90天</div></div>
+                </div>
+              </div>
+              <p class="summary">这次周期天数落在<em>21—35天的理想范围</em>内。<br>很棒！继续保持健康的生活节奏，<br>也记得规律作息，记录身体的变化。</p>
+            </section>
+          </div>
+          <div class="pagination" aria-label="第1页，共2页"><span class="is-active"></span><span></span></div>
+        </article>
+      </div>
+    </section>
+    <img class="panel" src="切图/操作面板.png" alt="症状、体重、心情、饮食，按住说话">
+    <img class="tabbar" src="切图/TabBar.png" alt="首页、记录、点滴（当前）、回顾、我">
+  </main>
+  <script>
+    const playButton = document.querySelector('.play-demo');
+    const record = document.querySelector('#demo-record');
+    const card = record.querySelector('.record-card');
+    const summary = record.querySelector('.summary');
+    const cyclePage = record.querySelector('.cycle-page');
+    const signalPage = record.querySelector('.signal-page');
+    const paginationDots = record.querySelectorAll('.pagination span');
+    const showPagination = (animate = true) => {
+      const pagination = record.querySelector('.pagination');
+      const textBottom = signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight;
+      signalCardHeight = Math.max(signalCardHeight, textBottom + 27);
+      card.style.height = `${signalCardHeight}px`;
+      pagination.style.top = `${signalCardHeight - 20}px`;
+      pagination.style.visibility = 'visible';
+      pagination.style.opacity = '1';
+      pagination.setAttribute('aria-hidden', 'false');
+      paginationDots.forEach(dot => dot.setAttribute('tabindex', '0'));
+      if (animate) pagination.animate([{ opacity: 0 }, { opacity: 1 }],
+        { duration: 240, easing: 'ease', fill: 'forwards' });
+    };
+    const signalItems = signalPage.querySelectorAll('.signal-item');
+    const signalChart = signalPage.querySelector('.chart');
+    const signalSummary = signalPage.querySelector('.summary');
+    const fullSignalSummary = signalSummary.innerHTML;
+    const signalSummaryTokens = Array.from(signalSummary.childNodes).flatMap(node =>
+      node.nodeType === 1 && node.tagName === 'BR'
+        ? [{ character: '\n', lineBreak: true }]
+        : Array.from(node.textContent).map(character => ({
+            character, highlight: node.nodeType === 1 && node.tagName === 'EM'
+          }))
+    );
+    let signalCardHeight = 0;
+    let currentAnalysisPage = 0;
+    let pagesReady = false;
+    let pageSwitching = false;
+    const typeSignalSummary = () => {
+      let index = 0;
+      const typeNext = () => {
+        const token = signalSummaryTokens[index++];
+        if (token.lineBreak) {
+          signalSummary.append(document.createElement('br'));
+        } else {
+          const character = document.createElement('span');
+          character.className = 'summary-char';
+          character.textContent = token.character;
+          if (token.highlight) {
+            const highlight = document.createElement('em');
+            highlight.append(character);
+            signalSummary.append(highlight);
+          } else {
+            signalSummary.append(character);
+          }
+        }
+        const textBottom = signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight;
+        signalCardHeight = Math.max(signalCardHeight, textBottom + 12);
+        card.style.height = `${signalCardHeight}px`;
+        record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
+        if (index < signalSummaryTokens.length) {
+          schedule(typeNext, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
+        } else {
+          schedule(() => {
+            pagesReady = true;
+            showPagination();
+          }, 180);
+        }
+      };
+      typeNext();
+    };
+    const setActiveSignal = (target, highlightText = false) => {
+      signalItems.forEach(item => {
+        const active = item.dataset.signal === target;
+        item.classList.toggle('is-lit', active);
+        item.classList.toggle('is-active', active && highlightText);
+        item.querySelector('.signal-light').setAttribute('aria-label',
+          `${item.querySelector('.signal-name').textContent}，${active ? '已点亮' : '未点亮'}`);
+      });
+    };
+    const playSignalSequence = () => {
+      setActiveSignal('off');
+      ['stable', 'mild', 'strong', 'watch'].forEach((signal, index) => {
+        schedule(() => setActiveSignal(signal), 250 + index * 250);
+      });
+      schedule(() => {
+        setActiveSignal('stable', true);
+        // Finish the final lamp's 250 ms fade before typing the summary.
+        schedule(typeSignalSummary, 250);
+      }, 1250);
+    };
+    const fullSummary = summary.innerHTML;
+    const activateSignalPage = () => {
+      currentAnalysisPage = 1;
+      paginationDots.forEach((dot, index) => dot.classList.toggle('is-active', index === 1));
+      record.querySelector('.pagination').setAttribute('aria-label', '第2页，共2页');
+      cyclePage.setAttribute('aria-hidden', 'true');
+      signalPage.setAttribute('aria-hidden', 'false');
+    };
+    const slideToSignalPage = () => {
+      signalCardHeight = card.getBoundingClientRect().height;
+      card.style.height = `${signalCardHeight}px`;
+      signalPage.hidden = false;
+      signalSummary.replaceChildren();
+      signalChart.style.opacity = '0';
+      activateSignalPage();
+      const options = { duration: 460, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+      cyclePage.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(-110%)' }], options);
+      signalPage.animate([{ transform: 'translateX(110%)' }, { transform: 'translateX(0)' }], options);
+      schedule(() => {
+        cyclePage.hidden = true;
+        signalChart.animate([{ opacity: 0 }, { opacity: 1 }],
+          { duration: 360, easing: 'ease', fill: 'forwards' });
+        schedule(playSignalSequence, 360);
+      }, 460);
+    };
+    const summaryTokens = Array.from(summary.childNodes).flatMap(node =>
+      Array.from(node.textContent).map(character => ({
+        character, highlight: node.nodeType === 1 && node.tagName === 'EM'
+      }))
+    );
+    let timers = [];
+    const schedule = (callback, delay) => {
+      timers.push(window.setTimeout(callback, delay));
+    };
+    const fadeIn = (selector, delay, duration) => {
+      record.querySelectorAll(selector).forEach(element => element.animate(
+        [{ opacity: 0 }, { opacity: 1 }],
+        { delay, duration, easing: 'ease', fill: 'both' }
+      ));
+    };
+    playButton.addEventListener('click', () => {
+      timers.forEach(timer => window.clearTimeout(timer));
+      timers = [];
+      record.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+      record.hidden = false;
+      cyclePage.hidden = false;
+      signalPage.hidden = true;
+      signalSummary.innerHTML = fullSignalSummary;
+      signalChart.style.opacity = '';
+      setActiveSignal('off');
+      cyclePage.setAttribute('aria-hidden', 'false');
+      signalPage.setAttribute('aria-hidden', 'true');
+      paginationDots.forEach((dot, index) => dot.classList.toggle('is-active', index === 0));
+      record.querySelector('.pagination').setAttribute('aria-label', '第1页，共2页');
+      summary.innerHTML = fullSummary;
+      signalCardHeight = 0;
+      currentAnalysisPage = 0;
+      pagesReady = false;
+      pageSwitching = false;
+      card.style.transition = '';
+      card.style.height = '';
+      record.querySelector('.pagination').style.top = '';
+      record.querySelector('.pagination').style.opacity = '0';
+      record.querySelector('.pagination').style.visibility = 'hidden';
+      record.querySelector('.pagination').setAttribute('aria-hidden', 'true');
+      paginationDots.forEach(dot => dot.setAttribute('tabindex', '-1'));
+      playButton.setAttribute('aria-expanded', 'true');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        cyclePage.hidden = true;
+        signalPage.hidden = false;
+        activateSignalPage();
+        setActiveSignal('stable', true);
+        signalCardHeight = Math.max(card.getBoundingClientRect().height,
+          signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight + 27);
+        card.style.height = `${signalCardHeight}px`;
+        record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
+        pagesReady = true;
+        showPagination(false);
+        return;
+      }
+
+      // Match the reference: shell 250 ms, primary 250 ms,
+      // divider 550 ms, analysis 790 ms; bar chart finishes at 1990 ms.
+      summary.replaceChildren();
+      card.animate([
+        { clipPath: 'inset(0 calc(100% - 72px) calc(100% - 64px) 0 round 12px)', transform: 'scale(.22)' },
+        { clipPath: 'inset(0 round 12px)', transform: 'scale(1)' }
+      ], { duration: 250, easing: 'ease', fill: 'both' });
+      const heightAnimation = card.animate([
+        { height: '89px', offset: 0 },
+        { height: '89px', offset: 550 / 1150, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+        { height: '133px', offset: 790 / 1150, easing: 'cubic-bezier(.22, 1, .36, 1)' },
+        { height: '294px', offset: 1 }
+      ], { duration: 1150, easing: 'linear', fill: 'both' });
+      fadeIn('.time, .period', 250, 300);
+      fadeIn('.divider', 550, 240);
+      fadeIn('.analysis-title', 790, 400);
+      fadeIn('.cycle-page .chart', 790, 360);
+      // Reference bar chart: 40 ms reset, 300 ms shell, then staggered rows.
+      const chartShellStart = 790 + 40;
+      const chartRowsStart = chartShellStart + 300;
+      fadeIn('.cycle-page .chart h2', chartShellStart, 300);
+      record.querySelectorAll('.chart-row').forEach((row, index) => {
+        const rowStart = chartRowsStart + index * 200;
+        const animateOpacity = (selector, delay, duration) => row.querySelector(selector).animate(
+          [{ opacity: 0 }, { opacity: 1 }],
+          { delay, duration, easing: 'ease', fill: 'both' }
+        );
+        animateOpacity('.cycle-label', rowStart, 300);
+        animateOpacity('.cycle-status', rowStart + 20, 300);
+        row.querySelector('.bar').animate(
+          [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }],
+          { delay: rowStart + 40, duration: 400, easing: 'ease', fill: 'both' }
+        );
+        animateOpacity('.bar-value', rowStart + 180, 180);
+      });
+      record.querySelector('.chart').animate([
+        { clipPath: 'inset(0 0 100% 0 round 8px)' },
+        { clipPath: 'inset(0 round 8px)' }
+      ], { delay: 790, duration: 360, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
+      fadeIn('.cycle-page .summary', 1990, 240);
+      const pagination = record.querySelector('.pagination');
+      pagination.style.opacity = '0';
+      schedule(() => {
+        // Release the shell height animation so the typed content controls height.
+        card.style.height = '294px';
+        heightAnimation.cancel();
+        card.style.transition = 'height 140ms ease';
+        const syncTypedHeight = () => {
+          const textBottom = cyclePage.parentElement.offsetTop + summary.offsetTop + summary.scrollHeight;
+          card.style.height = `${textBottom + 12}px`;
+        };
+        let index = 0;
+        const typeNextCharacter = () => {
+          const token = summaryTokens[index++];
+          const character = document.createElement('span');
+          character.className = 'summary-char';
+          character.textContent = token.character;
+          if (token.highlight) {
+            const highlight = document.createElement('em');
+            highlight.append(character);
+            summary.append(highlight);
+          } else {
+            summary.append(character);
+          }
+          syncTypedHeight();
+          if (index < summaryTokens.length) {
+            schedule(typeNextCharacter, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
+          } else {
+            syncTypedHeight();
+            slideToSignalPage();
+          }
+        };
+        typeNextCharacter();
+      }, 1990);
+    });
+    const switchAnalysisPage = target => {
+      if (!pagesReady || pageSwitching || target === currentAnalysisPage) return;
+      pageSwitching = true;
+      const outgoing = currentAnalysisPage === 0 ? cyclePage : signalPage;
+      const incoming = target === 0 ? cyclePage : signalPage;
+      const direction = target === 1 ? -1 : 1;
+      cyclePage.getAnimations().forEach(animation => animation.cancel());
+      signalPage.getAnimations().forEach(animation => animation.cancel());
+      incoming.hidden = false;
+      // Keep the largest height reached by either page.
+      signalCardHeight = Math.max(signalCardHeight, card.getBoundingClientRect().height);
+      card.style.height = `${signalCardHeight}px`;
+      record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
+      currentAnalysisPage = target;
+      paginationDots.forEach((dot, index) => dot.classList.toggle('is-active', index === target));
+      record.querySelector('.pagination').setAttribute('aria-label', `第${target + 1}页，共2页`);
+      outgoing.setAttribute('aria-hidden', 'true');
+      incoming.setAttribute('aria-hidden', 'false');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        outgoing.hidden = true;
+        pageSwitching = false;
+        return;
+      }
+      const options = { duration: 460, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' };
+      outgoing.animate([{ transform: 'translateX(0)' }, { transform: `translateX(${direction * 110}%)` }], options);
+      incoming.animate([{ transform: `translateX(${-direction * 110}%)` }, { transform: 'translateX(0)' }], options);
+      schedule(() => { outgoing.hidden = true; pageSwitching = false; }, 460);
+    };
+    const viewport = record.querySelector('.analysis-viewport');
+    let pointerStart = null;
+    viewport.addEventListener('pointerdown', event => {
+      if (!pagesReady || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      pointerStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+      viewport.setPointerCapture(event.pointerId);
+    });
+    viewport.addEventListener('pointerup', event => {
+      if (!pointerStart || pointerStart.id !== event.pointerId) return;
+      const dx = event.clientX - pointerStart.x;
+      const dy = event.clientY - pointerStart.y;
+      pointerStart = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) switchAnalysisPage(dx < 0 ? 1 : 0);
+    });
+    viewport.addEventListener('pointercancel', () => { pointerStart = null; });
+    paginationDots.forEach((dot, index) => {
+      dot.setAttribute('role', 'button');
+      dot.setAttribute('tabindex', '0');
+      dot.setAttribute('aria-label', `切换到第${index + 1}页`);
+      dot.addEventListener('click', () => switchAnalysisPage(index));
+      dot.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          switchAnalysisPage(index);
+        }
+      });
+    });
+
+  </script>
+</body>
+</html>
