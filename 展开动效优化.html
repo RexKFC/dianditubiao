@@ -33,11 +33,8 @@
     }
     .panel { z-index: 3; left: -8px; bottom: 71px; width: 418px; height: 182px; }
     .tabbar { z-index: 4; left: 0; bottom: 0; width: 402px; height: 83px; }
-    .play-demo {
-      position: absolute;
-      z-index: 5;
-      top: 70px;
-      right: 16px;
+    .demo-controls { position: absolute; z-index: 5; top: 70px; right: 16px; display: flex; gap: 6px; }
+    .demo-button {
       padding: 7px 12px;
       border: 0;
       border-radius: 18px;
@@ -46,9 +43,9 @@
       font: 500 12px/1.2 "PingFang SC", "Microsoft YaHei", sans-serif;
       cursor: pointer;
     }
-    .play-demo:hover { background: #ed3175; }
-    .play-demo:active { transform: scale(0.96); }
-    .play-demo:focus-visible { outline: 2px solid #a51c51; outline-offset: 3px; }
+    .demo-button:hover { background: #ed3175; }
+    .demo-button:active { transform: scale(0.96); }
+    .demo-button:focus-visible { outline: 2px solid #a51c51; outline-offset: 3px; }
     .content { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; color: #333; }
     .demo-record[hidden] { display: none; }
     .date { position: absolute; top: 12px; left: 11px; display: flex; align-items: center; gap: 6px; height: 30px; }
@@ -83,6 +80,10 @@
     .pagination { position: absolute; top: 355px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
     .pagination span { width: 8px; height: 8px; border-radius: 50%; background: #f2f2f6; }
     .pagination span.is-active { background: #ff68a2; }
+    .trend-entry { position: absolute; z-index: 1; left: 12px; right: 12px; height: 40px; display: flex; align-items: center; justify-content: space-between; padding: 0 9px; border: 0; border-radius: 8px; background: #fafafa; color: #666; font: 400 15px/1.4 "PingFang SC", "Microsoft YaHei", sans-serif; cursor: pointer; text-align: left; }
+    .trend-entry[hidden] { display: none; }
+    .trend-entry::after { content: ""; width: 8px; height: 8px; border-top: 1.5px solid #999; border-right: 1.5px solid #999; transform: rotate(45deg); margin-right: 3px; }
+    .trend-entry:focus-visible { outline: 2px solid #ff4085; outline-offset: 2px; }
     .pagination span { cursor: pointer; }
     .analysis-viewport { touch-action: pan-y; user-select: none; }
     .analysis-viewport { position: absolute; top: 133px; left: 12px; right: 12px; bottom: 0; overflow: hidden; }
@@ -106,12 +107,40 @@
     .signal-name { font-size: 13px; line-height: 18px; white-space: nowrap; }
     .signal-meta { margin-top: 2px; font-size: 11px; line-height: 15px; }
     .is-active .signal-meta { color: #999; }
+
+    .scheme-two-layout { position: absolute; top: 133px; left: 12px; right: 12px; }
+    .scheme-two-layout .chart { left: 0; right: auto; top: 0; width: 342px; height: 152px; }
+    .scheme-two-layout .chart h2, .scheme-two-layout .signal-light, .scheme-two-layout .signal-list, .scheme-two-layout .chart-row { transition: all 420ms cubic-bezier(.22, 1, .36, 1); }
+    .scheme-two-layout .chart.is-compact { width: 167px; height: 116px; }
+    .scheme-two-layout .chart.is-compact h2 { font-size: 14px; }
+    .scheme-two-layout .chart.is-compact .cycle-label, .scheme-two-layout .chart.is-compact .cycle-status { display: none; }
+    .scheme-two-layout .chart.is-compact .chart-row { left: 8px; right: 8px; height: 16px; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(1) { top: 44px; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(2) { top: 68px; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(3) { top: 92px; }
+    .scheme-two-layout .chart.is-compact .bar { height: 16px; line-height: 16px; font-size: 11px; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(1) .bar { width: 95% !important; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(2) .bar { width: 100% !important; }
+    .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(3) .bar { width: 71% !important; }
+    .scheme-two-layout .signal-chart { top: 124px; }
+    .scheme-two-layout .signal-chart.is-compact { top: 0; left: 175px; }
+    .scheme-two-layout .signal-chart.is-compact .signal-list { top: 54px; }
+    .scheme-two-layout .signal-chart.is-compact .signal-light { width: 24px; height: 24px; margin-bottom: 4px; }
+    .scheme-two-layout .signal-chart.is-compact .signal-meta,
+    .scheme-two-layout .signal-chart.is-compact .signal-item:not(.is-active) .signal-name { display: none; }
+    .scheme-two-copy { position: absolute; top: 124px; left: 0; right: 0; font-size: 17px; line-height: 27px; letter-spacing: -.35px; }
+    .scheme-two-copy p { margin: 0; }
+    .scheme-two-copy p + p { margin-top: 10px; }
+    .scheme-two-copy em { font-style: normal; color: #ff4085; }
   </style>
 </head>
 <body>
   <main class="page" aria-label="点滴，展开动效优化">
     <img class="header" src="切图/头部.png" alt="状态栏，9:41，点滴">
-    <button class="play-demo" type="button" aria-controls="demo-record" aria-expanded="false">播放演示</button>
+    <div class="demo-controls">
+      <button class="demo-button play-demo" type="button" aria-controls="demo-record" aria-expanded="false">方案1</button>
+      <button class="demo-button scheme-two" type="button">方案2</button>
+    </div>
     <section class="content" aria-label="记录内容">
       <div class="demo-record" id="demo-record" hidden>
         <div class="date"><strong>5月20日</strong><span>周五</span></div>
@@ -150,6 +179,7 @@
             </section>
           </div>
           <div class="pagination" aria-label="第1页，共2页"><span class="is-active"></span><span></span></div>
+          <button class="trend-entry" type="button" hidden>查看月经周期变化趋势</button>
         </article>
       </div>
     </section>
@@ -164,6 +194,17 @@
     const cyclePage = record.querySelector('.cycle-page');
     const signalPage = record.querySelector('.signal-page');
     const paginationDots = record.querySelectorAll('.pagination span');
+    const trendEntry = record.querySelector('.trend-entry');
+    let trendVisible = false;
+    const showTrendEntry = (animate = true) => {
+      trendVisible = true;
+      trendEntry.hidden = false;
+      trendEntry.style.top = `${signalCardHeight - 4}px`;
+      card.style.height = `${signalCardHeight + 48}px`;
+      if (animate) trendEntry.animate(
+        [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 240, easing: 'ease', fill: 'both' });
+    };
     const showPagination = (animate = true) => {
       const pagination = record.querySelector('.pagination');
       const textBottom = signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight;
@@ -174,8 +215,13 @@
       pagination.style.opacity = '1';
       pagination.setAttribute('aria-hidden', 'false');
       paginationDots.forEach(dot => dot.setAttribute('tabindex', '0'));
-      if (animate) pagination.animate([{ opacity: 0 }, { opacity: 1 }],
-        { duration: 240, easing: 'ease', fill: 'forwards' });
+      if (animate) {
+        pagination.animate([{ opacity: 0 }, { opacity: 1 }],
+          { duration: 240, easing: 'ease', fill: 'forwards' });
+        schedule(() => showTrendEntry(), 240);
+      } else {
+        showTrendEntry(false);
+      }
     };
     const signalItems = signalPage.querySelectorAll('.signal-item');
     const signalChart = signalPage.querySelector('.chart');
@@ -285,10 +331,110 @@
         { delay, duration, easing: 'ease', fill: 'both' }
       ));
     };
-    playButton.addEventListener('click', () => {
+    const startSchemeTwo = (reducedMotion = false) => {
+      const layout = document.createElement('section');
+      layout.className = 'scheme-two-layout';
+      layout.setAttribute('aria-label', '方案2，周期分析');
+      const bars = cyclePage.querySelector('.chart').cloneNode(true);
+      const lights = signalChart.cloneNode(true);
+      lights.style.opacity = '';
+      lights.hidden = true;
+      const copy = document.createElement('div');
+      copy.className = 'scheme-two-copy';
+      const cycleCopy = document.createElement('p');
+      const signalCopy = document.createElement('p');
+      copy.append(cycleCopy, signalCopy);
+      layout.append(bars, lights, copy);
+      card.append(layout);
+      record.querySelector('.analysis-viewport').hidden = true;
+      card.style.transition = reducedMotion ? '' : 'height 420ms cubic-bezier(.22, 1, .36, 1)';
+      card.style.height = '297px';
+      const setLamp = (target, highlight = false) => {
+        lights.querySelectorAll('.signal-item').forEach(item => {
+          const active = item.dataset.signal === target;
+          item.classList.toggle('is-lit', active);
+          item.classList.toggle('is-active', active && highlight);
+          item.querySelector('.signal-light').setAttribute('aria-label',
+            `${item.querySelector('.signal-name').textContent}，${active ? '已点亮' : '未点亮'}`);
+        });
+      };
+      const finish = () => {
+        const bottom = layout.offsetTop + copy.offsetTop + copy.scrollHeight;
+        // Scheme 2 has two thumbnails rather than carousel dots.
+        signalCardHeight = bottom + 16;
+        showTrendEntry(!reducedMotion);
+      };
+      const syncHeight = () => {
+        card.style.height = `${layout.offsetTop + copy.offsetTop + copy.scrollHeight + 12}px`;
+      };
+      const typeParagraph = (element, html, done) => {
+        const template = document.createElement('div');
+        template.innerHTML = html;
+        const tokens = Array.from(template.childNodes).flatMap(node =>
+          Array.from(node.textContent).map(character => ({ character, highlight: node.nodeType === 1 && node.tagName === 'EM' })));
+        let index = 0;
+        const next = () => {
+          const token = tokens[index++];
+          const character = document.createElement('span');
+          character.className = 'summary-char';
+          character.textContent = token.character;
+          if (token.highlight) {
+            const highlight = document.createElement('em');
+            highlight.append(character);
+            element.append(highlight);
+          } else element.append(character);
+          syncHeight();
+          if (index < tokens.length) schedule(next, /[，。,；：！？]/.test(token.character) ? 90 : 28);
+          else schedule(done, 180);
+        };
+        next();
+      };
+      const secondText = '这次周期天数落在<em>21—35天的理想范围</em>内。很棒！继续保持现在的健康生活节奏就可以。';
+      if (reducedMotion) {
+        bars.classList.add('is-compact');
+        lights.hidden = false;
+        lights.classList.add('is-compact');
+        setLamp('stable', true);
+        cycleCopy.innerHTML = fullSummary;
+        signalCopy.innerHTML = secondText;
+        finish();
+        return;
+      }
+      schedule(() => {
+        bars.classList.add('is-compact');
+        bars.animate([{ width: '342px', height: '152px' }, { width: '167px', height: '116px' }],
+          { duration: 420, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+        card.style.height = '261px';
+        schedule(() => {
+          lights.hidden = false;
+          setLamp('off');
+          card.style.height = '421px';
+          lights.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, easing: 'ease' });
+          schedule(() => {
+            ['stable', 'mild', 'strong', 'watch'].forEach((lamp, index) => schedule(() => setLamp(lamp), 250 + index * 250));
+            schedule(() => {
+              setLamp('stable', true);
+              schedule(() => {
+                lights.classList.add('is-compact');
+                lights.animate([
+                  { top: '124px', left: '0px', width: '342px', height: '152px' },
+                  { top: '0px', left: '175px', width: '167px', height: '116px' }
+                ], { duration: 420, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+                card.style.height = '261px';
+                schedule(() => typeParagraph(cycleCopy, fullSummary, () =>
+                  typeParagraph(signalCopy, secondText, finish)), 420);
+              }, 250);
+            }, 1250);
+          }, 360);
+        }, 420);
+      }, 300);
+    };
+    const playDemo = (mode = 1) => {
       timers.forEach(timer => window.clearTimeout(timer));
       timers = [];
       record.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
+      record.querySelector('.scheme-two-layout')?.remove();
+      record.querySelector('.analysis-viewport').hidden = false;
       record.hidden = false;
       cyclePage.hidden = false;
       signalPage.hidden = true;
@@ -301,6 +447,8 @@
       record.querySelector('.pagination').setAttribute('aria-label', '第1页，共2页');
       summary.innerHTML = fullSummary;
       signalCardHeight = 0;
+      trendVisible = false;
+      trendEntry.hidden = true;
       currentAnalysisPage = 0;
       pagesReady = false;
       pageSwitching = false;
@@ -311,8 +459,10 @@
       record.querySelector('.pagination').style.visibility = 'hidden';
       record.querySelector('.pagination').setAttribute('aria-hidden', 'true');
       paginationDots.forEach(dot => dot.setAttribute('tabindex', '-1'));
-      playButton.setAttribute('aria-expanded', 'true');
+      playButton.setAttribute('aria-expanded', String(mode === 1));
+      document.querySelector('.scheme-two').setAttribute('aria-expanded', String(mode === 2));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (mode === 2) { startSchemeTwo(true); return; }
         cyclePage.hidden = true;
         signalPage.hidden = false;
         activateSignalPage();
@@ -365,7 +515,7 @@
         { clipPath: 'inset(0 0 100% 0 round 8px)' },
         { clipPath: 'inset(0 round 8px)' }
       ], { delay: 790, duration: 360, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'both' });
-      fadeIn('.cycle-page .summary', 1990, 240);
+      if (mode === 1) fadeIn('.cycle-page .summary', 1990, 240);
       const pagination = record.querySelector('.pagination');
       pagination.style.opacity = '0';
       schedule(() => {
@@ -373,6 +523,7 @@
         card.style.height = '294px';
         heightAnimation.cancel();
         card.style.transition = 'height 140ms ease';
+        if (mode === 2) { startSchemeTwo(); return; }
         const syncTypedHeight = () => {
           const textBottom = cyclePage.parentElement.offsetTop + summary.offsetTop + summary.scrollHeight;
           card.style.height = `${textBottom + 12}px`;
@@ -395,12 +546,14 @@
             schedule(typeNextCharacter, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
           } else {
             syncTypedHeight();
-            slideToSignalPage();
+            schedule(slideToSignalPage, 300);
           }
         };
         typeNextCharacter();
       }, 1990);
-    });
+    };
+    playButton.addEventListener('click', () => playDemo(1));
+    document.querySelector('.scheme-two').addEventListener('click', () => playDemo(2));
     const switchAnalysisPage = target => {
       if (!pagesReady || pageSwitching || target === currentAnalysisPage) return;
       pageSwitching = true;
@@ -411,8 +564,9 @@
       signalPage.getAnimations().forEach(animation => animation.cancel());
       incoming.hidden = false;
       // Keep the largest height reached by either page.
-      signalCardHeight = Math.max(signalCardHeight, card.getBoundingClientRect().height);
-      card.style.height = `${signalCardHeight}px`;
+      signalCardHeight = Math.max(signalCardHeight, card.getBoundingClientRect().height - (trendVisible ? 48 : 0));
+      card.style.height = `${signalCardHeight + (trendVisible ? 48 : 0)}px`;
+      if (trendVisible) trendEntry.style.top = `${signalCardHeight - 4}px`;
       record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
       currentAnalysisPage = target;
       paginationDots.forEach((dot, index) => dot.classList.toggle('is-active', index === target));
