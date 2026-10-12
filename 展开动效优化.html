@@ -349,8 +349,7 @@
       card.append(layout);
       record.querySelector('.analysis-viewport').hidden = true;
       card.style.transition = reducedMotion ? '' : 'height 420ms cubic-bezier(.22, 1, .36, 1)';
-      // Preserve the completed bar chart height during the thumbnail transition.
-      card.style.height = '294px';
+      // Preserve the existing height while replacing the chart with its thumbnail layout.
       const setLamp = (target, highlight = false) => {
         lights.querySelectorAll('.signal-item').forEach(item => {
           const active = item.dataset.signal === target;
@@ -489,12 +488,18 @@
         { clipPath: 'inset(0 calc(100% - 72px) calc(100% - 64px) 0 round 12px)', transform: 'scale(.22)' },
         { clipPath: 'inset(0 round 12px)', transform: 'scale(1)' }
       ], { duration: 250, easing: 'ease', fill: 'both' });
-      const heightAnimation = card.animate([
-        { height: '89px', offset: 0 },
-        { height: '89px', offset: 550 / 1150, easing: 'cubic-bezier(.22, 1, .36, 1)' },
-        { height: '133px', offset: 790 / 1150, easing: 'cubic-bezier(.22, 1, .36, 1)' },
-        { height: '294px', offset: 1 }
-      ], { duration: 1150, easing: 'linear', fill: 'both' });
+      // Keep height on one CSS property throughout the demo; avoid handing
+      // a forwards-filled Web Animation back to the underlying layout height.
+      card.style.transition = 'none';
+      card.style.height = '89px';
+      schedule(() => {
+        card.style.transition = 'height 240ms cubic-bezier(.22, 1, .36, 1)';
+        card.style.height = '133px';
+      }, 550);
+      schedule(() => {
+        card.style.transition = 'height 360ms cubic-bezier(.22, 1, .36, 1)';
+        card.style.height = '294px';
+      }, 790);
       fadeIn('.time, .period', 250, 300);
       fadeIn('.divider', 550, 240);
       fadeIn('.analysis-title', 790, 400);
@@ -525,9 +530,7 @@
       const pagination = record.querySelector('.pagination');
       pagination.style.opacity = '0';
       schedule(() => {
-        // Release the shell height animation so the typed content controls height.
-        card.style.height = '294px';
-        heightAnimation.cancel();
+        // The CSS height is already at its final chart value; no animation cancellation.
         card.style.transition = 'height 140ms ease';
         if (mode === 2) { startSchemeTwo(); return; }
         const syncTypedHeight = () => {
