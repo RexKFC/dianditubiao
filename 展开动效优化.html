@@ -124,6 +124,7 @@
     .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(2) .bar { width: 100% !important; }
     .scheme-two-layout .chart.is-compact .chart-row:nth-of-type(3) .bar { width: 71% !important; }
     .scheme-two-layout .signal-chart { top: 124px; }
+    .scheme-two-layout .signal-chart h2, .scheme-two-layout .signal-chart .signal-light, .scheme-two-layout .signal-chart .signal-list { transition-duration: 500ms; }
     .scheme-two-layout .signal-chart.is-compact { top: 0; left: 175px; }
     .scheme-two-layout .signal-chart.is-compact .signal-list { top: 54px; }
     .scheme-two-layout .signal-chart.is-compact .signal-light { width: 24px; height: 24px; margin-bottom: 4px; }
@@ -420,10 +421,14 @@
                 lights.animate([
                   { top: '124px', left: '0px', width: '342px', height: '152px' },
                   { top: '0px', left: '175px', width: '167px', height: '116px' }
-                ], { duration: 420, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+                ], { duration: 500, easing: 'cubic-bezier(.22, 1, .36, 1)' });
+                card.style.transition = 'height 500ms cubic-bezier(.22, 1, .36, 1)';
                 card.style.height = '261px';
-                schedule(() => typeParagraph(cycleCopy, fullSummary, () =>
-                  typeParagraph(signalCopy, secondText, finish)), 420);
+                schedule(() => {
+                  card.style.transition = 'height 140ms ease';
+                  typeParagraph(cycleCopy, fullSummary, () =>
+                    typeParagraph(signalCopy, secondText, finish));
+                }, 500 + 300);
               }, 250);
             }, 1250);
           }, 360);
