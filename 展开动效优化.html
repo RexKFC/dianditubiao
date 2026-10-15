@@ -146,12 +146,12 @@
     :is(.scheme-one, .scheme-three) .date strong { font-size: 22px; font-weight: 500; }
     :is(.scheme-one, .scheme-three) .date span { font-size: 14px; }
     :is(.scheme-one, .scheme-three) .divider, :is(.scheme-one, .scheme-three) .analysis-title { display: none; }
-    .scheme-one .analysis-viewport { top: 89px; bottom: 12px; background: #fff; border: .5px solid #fff; border-radius: 8px; box-shadow: 0 1px 8px rgba(0, 0, 0, .07); }
+    .scheme-one .analysis-viewport { top: 89px; bottom: 12px; background: var(--analysis-background); border: .5px solid transparent; border-radius: 8px; box-shadow: none; }
     .scheme-one .analysis-page .chart { top: 0; height: 174px; background: transparent; }
     .scheme-one .analysis-page .chart h2 { display: none; }
     .scheme-one .analysis-page .summary { top: 9px; left: 8px; right: 0; font-size: 15px; line-height: 27px; color: #666; letter-spacing: 0; }
     .scheme-one .summary em { color: inherit; }
-    .scheme-one .cycle-page .summary::before, .scheme-three-layout .cycle-copy::before { content: ""; float: left; width: 20px; height: 20px; margin: 4px 7px 0 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 40'%3E%3Cpath fill='%23ff635e' d='m14 0 4 11 10 4-10 4-4 11-4-11L0 15l10-4Z'/%3E%3Cpath fill='%23fa3aca' d='m27 20 3 7 6 3-6 3-3 7-3-7-7-3 7-3Z'/%3E%3C/svg%3E") center / contain no-repeat; }
+    .scheme-one .analysis-page .summary::before, .scheme-three-layout .cycle-copy::before { content: ""; float: left; width: 20px; height: 20px; margin: 4px 7px 0 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 40'%3E%3Cpath fill='%23ff635e' d='m14 0 4 11 10 4-10 4-4 11-4-11L0 15l10-4Z'/%3E%3Cpath fill='%23fa3aca' d='m27 20 3 7 6 3-6 3-3 7-3-7-7-3 7-3Z'/%3E%3C/svg%3E") center / contain no-repeat; }
     .scheme-one .chart-row:nth-of-type(1) { top: 77px; }
     .scheme-one .chart-row:nth-of-type(2) { top: 109px; }
     .scheme-one .chart-row:nth-of-type(3) { top: 141px; }
