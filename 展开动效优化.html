@@ -44,6 +44,7 @@
       font: 500 12px/1.2 "PingFang SC", "Microsoft YaHei", sans-serif;
       cursor: pointer;
     }
+    .demo-controls .demo-button { padding: 7px 6px; font-size: 11px; }
     .demo-button:hover { background: #ed3175; }
     .demo-button:active { transform: scale(0.96); }
     .demo-button:focus-visible { outline: 2px solid #a51c51; outline-offset: 3px; }
@@ -194,6 +195,7 @@
     </header>
     <div class="demo-controls">
       <button class="demo-button play-demo" type="button" aria-controls="demo-record" aria-expanded="false">翻页方案</button>
+      <button class="demo-button paged-two-button" type="button" aria-controls="demo-record" aria-expanded="false">翻页2</button>
       <button class="demo-button scheme-two" type="button" hidden>方案2</button>
       <button class="demo-button scheme-three-button" type="button" aria-controls="demo-record" aria-expanded="false">单页方案</button>
     </div>
@@ -257,11 +259,12 @@
     const trendEntry = record.querySelector('.trend-entry');
     let trendVisible = false;
     let activeScheme = 1;
+    let earlyPaginationShown = false;
     let singlePageResizeObserver = null;
     const schemeOneSignalText = '这次周期天数落在21—35天的理想范围内。很棒！继续保持现在的健康生活节奏就可以。';
     const analysisBottom = (page, paragraph) => {
       const textBottom = page.parentElement.offsetTop + paragraph.offsetTop + paragraph.scrollHeight;
-      if (activeScheme !== 1) return textBottom;
+      if (activeScheme !== 1 && activeScheme !== 4) return textBottom;
       const chart = page.querySelector('.chart');
       // Match the 8pt panel inset while text is typing before the chart appears.
       if (chart.style.visibility === 'hidden') return textBottom + 8 * 96 / 72;
@@ -276,6 +279,26 @@
         [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'translateY(0)' }],
         { duration: 240, easing: 'ease', fill: 'both' });
     };
+    const showEarlyPagination = () => {
+      // Measure the real second page in its existing container, without painting it.
+      const previousVisibility = signalPage.style.visibility;
+      signalPage.style.visibility = 'hidden';
+      signalPage.hidden = false;
+      const secondPageHeight = analysisBottom(signalPage, signalSummary) + 27;
+      signalPage.hidden = true;
+      signalPage.style.visibility = previousVisibility;
+      signalCardHeight = Math.max(card.getBoundingClientRect().height, secondPageHeight);
+      card.style.height = `${signalCardHeight}px`;
+      const pagination = record.querySelector('.pagination');
+      pagination.style.top = `${signalCardHeight - 20}px`;
+      pagination.style.visibility = 'visible';
+      pagination.style.opacity = '1';
+      pagination.setAttribute('aria-hidden', 'false');
+      paginationDots.forEach(dot => dot.setAttribute('tabindex', '0'));
+      pagination.animate([{ opacity: 0 }, { opacity: 1 }],
+        { duration: 240, easing: 'ease', fill: 'forwards' });
+      earlyPaginationShown = true;
+    };
     const showPagination = (animate = true) => {
       const pagination = record.querySelector('.pagination');
       const textBottom = analysisBottom(signalPage, signalSummary);
@@ -286,11 +309,12 @@
       pagination.style.opacity = '1';
       pagination.setAttribute('aria-hidden', 'false');
       paginationDots.forEach(dot => dot.setAttribute('tabindex', '0'));
+      if (activeScheme === 4 && earlyPaginationShown) return;
       if (animate) {
         pagination.animate([{ opacity: 0 }, { opacity: 1 }],
           { duration: 240, easing: 'ease', fill: 'forwards' });
-        if (activeScheme !== 1) schedule(() => showTrendEntry(), 240);
-      } else if (activeScheme !== 1) {
+        if (activeScheme !== 1 && activeScheme !== 4) schedule(() => showTrendEntry(), 240);
+      } else if (activeScheme !== 1 && activeScheme !== 4) {
         showTrendEntry(false);
       }
     };
@@ -631,7 +655,8 @@
       singlePageResizeObserver?.disconnect();
       singlePageResizeObserver = null;
       activeScheme = mode;
-      document.querySelector('.page').classList.toggle('scheme-one', mode === 1);
+      earlyPaginationShown = false;
+      document.querySelector('.page').classList.toggle('scheme-one', mode === 1 || mode === 4);
       document.querySelector('.page').classList.toggle('scheme-three', mode === 3);
       record.style.minHeight = '';
       document.querySelector('.content').scrollTop = 0;
@@ -646,7 +671,7 @@
       record.hidden = false;
       cyclePage.hidden = false;
       signalPage.hidden = true;
-      signalSummary.innerHTML = mode === 1 ? schemeOneSignalText : fullSignalSummary;
+      signalSummary.innerHTML = (mode === 1 || mode === 4) ? schemeOneSignalText : fullSignalSummary;
       signalSummaryTokens = Array.from(signalSummary.childNodes).flatMap(node =>
         node.nodeType === 1 && node.tagName === 'BR'
           ? [{ character: '\n', lineBreak: true }]
@@ -677,6 +702,7 @@
       playButton.setAttribute('aria-expanded', String(mode === 1));
       document.querySelector('.scheme-two').setAttribute('aria-expanded', String(mode === 2));
       document.querySelector('.scheme-three-button').setAttribute('aria-expanded', String(mode === 3));
+      document.querySelector('.paged-two-button').setAttribute('aria-expanded', String(mode === 4));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         if (mode === 3) { showSchemeThree(false); return; }
         if (mode === 2) { startSchemeTwo(true); return; }
@@ -710,13 +736,13 @@
       }, 550);
       schedule(() => {
         card.style.transition = 'height 360ms cubic-bezier(.22, 1, .36, 1)';
-        if (mode !== 3) card.style.height = mode === 1 ? `${analysisBottom(cyclePage, summary) + 12}px` : '294px';
+        if (mode !== 3) card.style.height = (mode === 1 || mode === 4) ? `${analysisBottom(cyclePage, summary) + 12}px` : '294px';
       }, 790);
       fadeIn('.time, .period', 250, 300);
       fadeIn('.divider', 550, 240);
       fadeIn('.analysis-title', 790, 400);
       if (mode === 3) { schedule(() => showSchemeThree(), 790); return; }
-      if (mode === 1) {
+      if (mode === 1 || mode === 4) {
         const chart = cyclePage.querySelector('.chart');
         chart.style.visibility = 'hidden';
         fadeIn('.cycle-page .summary', 790, 240);
@@ -754,6 +780,7 @@
                   fade('.bar-value', rowStart + 180, 180);
                 });
                 // Complete the third bar, then preserve the 500 ms page pause.
+                if (mode === 4) schedule(showEarlyPagination, 1180);
                 schedule(slideToSignalPage, 1180 + 500);
               }, 180);
             }
@@ -823,6 +850,7 @@
     playButton.addEventListener('click', () => playDemo(1));
     document.querySelector('.scheme-two').addEventListener('click', () => playDemo(2));
     document.querySelector('.scheme-three-button').addEventListener('click', () => playDemo(3));
+    document.querySelector('.paged-two-button').addEventListener('click', () => playDemo(4));
     const switchAnalysisPage = target => {
       if (!pagesReady || pageSwitching || target === currentAnalysisPage) return;
       pageSwitching = true;
