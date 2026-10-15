@@ -34,9 +34,9 @@
     }
     .panel { z-index: 3; left: -8px; bottom: 71px; width: 418px; height: 182px; }
     .tabbar { z-index: 4; left: 0; bottom: 0; width: 402px; height: 83px; }
-    .demo-controls { position: absolute; z-index: 5; top: 70px; right: 16px; display: flex; gap: 6px; }
+    .demo-controls { position: absolute; z-index: 5; top: 70px; right: 16px; display: flex; gap: 4px; }
     .demo-button {
-      padding: 7px 12px;
+      padding: 7px 9px;
       border: 0;
       border-radius: 18px;
       background: #ff4085;
@@ -133,18 +133,73 @@
     .scheme-two-copy { position: absolute; top: 124px; left: 0; right: 0; font-size: 17px; line-height: 27px; letter-spacing: -.35px; }
     .scheme-two-copy p { margin: 0; }
     .scheme-two-copy em { font-style: normal; color: #ff4085; }
+
+    /* Scheme 1: summary above the chart in a white, softly raised panel. */
+    .reference-header, .reference-input { display: none; }
+    :is(.scheme-one, .scheme-three) .header { display: none; }
+    :is(.scheme-one, .scheme-three) .reference-header { display: block; position: absolute; inset: 0 0 auto; height: 88px; border-bottom: .5px solid #e8e8eb; color: #000; font-family: -apple-system, "PingFang SC", sans-serif; }
+    .reference-time { position: absolute; top: 16px; left: 35px; font-size: 14px; font-weight: 600; }
+    .reference-status { position: absolute; top: 18px; right: 15px; width: 66px; height: 12px; }
+    .reference-title { position: absolute; top: 54px; left: 0; right: 0; text-align: center; font-size: 17px; font-weight: 600; color: #333; }
+    :is(.scheme-one, .scheme-three) .demo-controls { top: 54px; }
+    :is(.scheme-one, .scheme-three) .content { top: 88px; }
+    :is(.scheme-one, .scheme-three) .date strong { font-size: 22px; font-weight: 500; }
+    :is(.scheme-one, .scheme-three) .date span { font-size: 14px; }
+    :is(.scheme-one, .scheme-three) .divider, :is(.scheme-one, .scheme-three) .analysis-title { display: none; }
+    .scheme-one .analysis-viewport { top: 89px; bottom: 12px; background: #fff; border: .5px solid #fff; border-radius: 8px; box-shadow: 0 1px 8px rgba(0, 0, 0, .07); }
+    .scheme-one .analysis-page .chart { top: 0; height: 174px; background: transparent; }
+    .scheme-one .analysis-page .chart h2 { display: none; }
+    .scheme-one .analysis-page .summary { top: 9px; left: 8px; right: 0; font-size: 15px; line-height: 27px; color: #666; letter-spacing: 0; }
+    .scheme-one .summary em { color: inherit; }
+    .scheme-one .cycle-page .summary::before, .scheme-three-layout .cycle-copy::before { content: ""; float: left; width: 20px; height: 20px; margin: 4px 7px 0 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 40'%3E%3Cpath fill='%23ff635e' d='m14 0 4 11 10 4-10 4-4 11-4-11L0 15l10-4Z'/%3E%3Cpath fill='%23fa3aca' d='m27 20 3 7 6 3-6 3-3 7-3-7-7-3 7-3Z'/%3E%3C/svg%3E") center / contain no-repeat; }
+    .scheme-one .chart-row:nth-of-type(1) { top: 77px; }
+    .scheme-one .chart-row:nth-of-type(2) { top: 109px; }
+    .scheme-one .chart-row:nth-of-type(3) { top: 141px; }
+    .scheme-one .cycle-label, .scheme-one .cycle-status { flex-shrink: 0; }
+    .scheme-one .cycle-page .chart-row:nth-of-type(3) .bar { width: 201px !important; }
+    .scheme-one .analysis-page .signal-chart { height: 190px; }
+    .scheme-one .signal-list { top: 86px; }
+    /* Inner panel ends 12px above the card bottom; reserve 8pt below the dots. */
+    .scheme-one .pagination { z-index: 1; transform: translateY(-8pt); }
+    .scheme-one .trend-entry { display: none; }
+    :is(.scheme-one, .scheme-three) .reference-input { display: flex; align-items: center; gap: 9px; position: absolute; z-index: 3; left: 24px; top: 723px; width: 354px; height: 48px; padding: 0 11px; border: 1px solid #dedee3; border-radius: 25px; background: #fff; color: #ccc; font: 400 17px/1.2 "PingFang SC", sans-serif; }
+    .reference-input svg { flex: 0 0 25px; width: 25px; height: 25px; }
+
+    .scheme-three .content { bottom: 249px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none; }
+    .scheme-three .content::-webkit-scrollbar { display: none; }
+    .scheme-three-layout { position: absolute; top: 89px; left: 12px; right: 12px; display: flex; flex-direction: column; gap: 0; padding: 8px; border-radius: 8px; background: var(--analysis-background); }
+    .scheme-three-layout .chart { position: relative; inset: auto; width: 100%; height: 98px; flex: 0 0 98px; overflow: hidden; background: transparent; }
+    .scheme-three-layout .chart h2 { display: none; }
+    .scheme-three-layout .chart-row { left: 0; right: 0; }
+    .scheme-three-layout .chart-row:nth-of-type(1) { top: 6px; }
+    .scheme-three-layout .chart-row:nth-of-type(2) { top: 38px; }
+    .scheme-three-layout .chart-row:nth-of-type(3) { top: 70px; }
+    .scheme-three-layout .cycle-label, .scheme-three-layout .cycle-status { flex-shrink: 0; }
+    .scheme-three-layout .chart-row:nth-of-type(3) .bar { width: 201px !important; }
+    .scheme-three-layout .signal-chart { height: 110px; flex-basis: 110px; }
+    .scheme-three-layout .signal-list { top: 8px; left: 0; right: 0; }
+    .scheme-three-layout .stacked-divider { flex: 0 0 .5px; height: .5px; margin: 2px 0 8px; background: #E8E8E8; }
+    .scheme-three-layout [hidden] { display: none; }
+    .scheme-three-layout .stacked-summary { margin: 0 0 8px; color: #666; font-size: 15px; line-height: 27px; letter-spacing: 0; }
+    .scheme-three-layout .stacked-summary em { font-style: normal; color: inherit; }
   </style>
 </head>
 <body>
-  <main class="page" aria-label="点滴，展开动效优化">
+  <main class="page scheme-one" aria-label="点滴，展开动效优化">
     <img class="header" src="切图/头部.png" alt="状态栏，9:41，点滴">
+    <header class="reference-header" aria-label="9:41，点滴">
+      <span class="reference-time">9:41</span>
+      <svg class="reference-status" viewBox="0 0 66 12" aria-hidden="true"><g fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="5" width="3" height="7" rx="1"/><rect x="9" y="2.5" width="3" height="9.5" rx="1"/><rect x="13.5" width="3" height="12" rx="1"/><rect x="44" y="2" width="18" height="8" rx="1.5"/><rect x="64" y="4" width="1" height="4" rx=".5" opacity=".4"/></g><g stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"><path d="M23 3Q29-2 35 3M25 6Q29 2.5 33 6M28 9L29 10L30 9"/></g></svg>
+      <div class="reference-title">点滴</div>
+    </header>
     <div class="demo-controls">
-      <button class="demo-button play-demo" type="button" aria-controls="demo-record" aria-expanded="false">方案1</button>
-      <button class="demo-button scheme-two" type="button">方案2</button>
+      <button class="demo-button play-demo" type="button" aria-controls="demo-record" aria-expanded="false">翻页方案</button>
+      <button class="demo-button scheme-two" type="button" hidden>方案2</button>
+      <button class="demo-button scheme-three-button" type="button" aria-controls="demo-record" aria-expanded="false">单页方案</button>
     </div>
     <section class="content" aria-label="记录内容">
       <div class="demo-record" id="demo-record" hidden>
-        <div class="date"><strong>5月20日</strong><span>周五</span></div>
+        <div class="date"><strong>今天</strong><span>9月23日 周一</span></div>
         <article class="record-card" aria-label="13:20 月经来了，本次周期分析">
           <time class="time">13:20</time>
           <div class="period">
@@ -185,6 +240,10 @@
       </div>
     </section>
     <img class="panel" src="切图/操作面板.png" alt="症状、体重、心情、饮食，按住说话">
+    <div class="reference-input" aria-label="记录生活点滴">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" fill="none" stroke="#666" stroke-width="1.5"/><circle cx="8.5" cy="13" r="1.7" fill="#666"/><path d="M12 9q5 4 0 8M15 6q8 7 0 14" fill="none" stroke="#666" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>记录生活点滴</span>
+    </div>
     <img class="tabbar" src="切图/TabBar.png" alt="首页、记录、点滴（当前）、回顾、我">
   </main>
   <script>
@@ -197,6 +256,17 @@
     const paginationDots = record.querySelectorAll('.pagination span');
     const trendEntry = record.querySelector('.trend-entry');
     let trendVisible = false;
+    let activeScheme = 1;
+    let singlePageResizeObserver = null;
+    const schemeOneSignalText = '这次周期天数落在21—35天的理想范围内。很棒！继续保持现在的健康生活节奏就可以。';
+    const analysisBottom = (page, paragraph) => {
+      const textBottom = page.parentElement.offsetTop + paragraph.offsetTop + paragraph.scrollHeight;
+      if (activeScheme !== 1) return textBottom;
+      const chart = page.querySelector('.chart');
+      // Match the 8pt panel inset while text is typing before the chart appears.
+      if (chart.style.visibility === 'hidden') return textBottom + 8 * 96 / 72;
+      return Math.max(textBottom, page.parentElement.offsetTop + chart.offsetTop + chart.offsetHeight);
+    };
     const showTrendEntry = (animate = true) => {
       trendVisible = true;
       trendEntry.hidden = false;
@@ -208,7 +278,7 @@
     };
     const showPagination = (animate = true) => {
       const pagination = record.querySelector('.pagination');
-      const textBottom = signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight;
+      const textBottom = analysisBottom(signalPage, signalSummary);
       signalCardHeight = Math.max(signalCardHeight, textBottom + 27);
       card.style.height = `${signalCardHeight}px`;
       pagination.style.top = `${signalCardHeight - 20}px`;
@@ -219,8 +289,8 @@
       if (animate) {
         pagination.animate([{ opacity: 0 }, { opacity: 1 }],
           { duration: 240, easing: 'ease', fill: 'forwards' });
-        schedule(() => showTrendEntry(), 240);
-      } else {
+        if (activeScheme !== 1) schedule(() => showTrendEntry(), 240);
+      } else if (activeScheme !== 1) {
         showTrendEntry(false);
       }
     };
@@ -228,7 +298,7 @@
     const signalChart = signalPage.querySelector('.chart');
     const signalSummary = signalPage.querySelector('.summary');
     const fullSignalSummary = signalSummary.innerHTML;
-    const signalSummaryTokens = Array.from(signalSummary.childNodes).flatMap(node =>
+    let signalSummaryTokens = Array.from(signalSummary.childNodes).flatMap(node =>
       node.nodeType === 1 && node.tagName === 'BR'
         ? [{ character: '\n', lineBreak: true }]
         : Array.from(node.textContent).map(character => ({
@@ -239,7 +309,7 @@
     let currentAnalysisPage = 0;
     let pagesReady = false;
     let pageSwitching = false;
-    const typeSignalSummary = () => {
+    const typeSignalSummary = (onComplete = () => { pagesReady = true; showPagination(); }) => {
       let index = 0;
       const typeNext = () => {
         const token = signalSummaryTokens[index++];
@@ -257,17 +327,14 @@
             signalSummary.append(character);
           }
         }
-        const textBottom = signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight;
+        const textBottom = analysisBottom(signalPage, signalSummary);
         signalCardHeight = Math.max(signalCardHeight, textBottom + 12);
         card.style.height = `${signalCardHeight}px`;
         record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
         if (index < signalSummaryTokens.length) {
           schedule(typeNext, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
         } else {
-          schedule(() => {
-            pagesReady = true;
-            showPagination();
-          }, 180);
+          schedule(onComplete, 180);
         }
       };
       typeNext();
@@ -281,15 +348,15 @@
           `${item.querySelector('.signal-name').textContent}，${active ? '已点亮' : '未点亮'}`);
       });
     };
-    const playSignalSequence = () => {
+    const playSignalSequence = (onComplete = typeSignalSummary) => {
       setActiveSignal('off');
       ['stable', 'mild', 'strong', 'watch'].forEach((signal, index) => {
         schedule(() => setActiveSignal(signal), 250 + index * 250);
       });
       schedule(() => {
         setActiveSignal('stable', true);
-        // Finish the final lamp's 250 ms fade before typing the summary.
-        schedule(typeSignalSummary, 250);
+        // Let the final stable lamp finish fading before advancing.
+        schedule(onComplete, 250);
       }, 1250);
     };
     const fullSummary = summary.innerHTML;
@@ -312,9 +379,18 @@
       signalPage.animate([{ transform: 'translateX(110%)' }, { transform: 'translateX(0)' }], options);
       schedule(() => {
         cyclePage.hidden = true;
-        signalChart.animate([{ opacity: 0 }, { opacity: 1 }],
-          { duration: 360, easing: 'ease', fill: 'forwards' });
-        schedule(playSignalSequence, 360);
+        signalChart.style.visibility = 'hidden';
+        typeSignalSummary(() => {
+          signalChart.style.visibility = 'visible';
+          signalCardHeight = Math.max(signalCardHeight, analysisBottom(signalPage, signalSummary) + 12);
+          card.style.height = `${signalCardHeight}px`;
+          signalChart.animate([{ opacity: 0 }, { opacity: 1 }],
+            { duration: 360, easing: 'ease', fill: 'forwards' });
+          schedule(() => playSignalSequence(() => {
+            pagesReady = true;
+            showPagination();
+          }), 360);
+        });
       }, 460);
     };
     const summaryTokens = Array.from(summary.childNodes).flatMap(node =>
@@ -434,17 +510,151 @@
         }, 420);
       }, 300);
     };
+    const showSchemeThree = (animate = true) => {
+      const layout = document.createElement('section');
+      layout.className = 'scheme-three-layout';
+      layout.setAttribute('aria-label', '方案3，周期分析与月经信号灯');
+      const bars = cyclePage.querySelector('.chart').cloneNode(true);
+      const lights = signalChart.cloneNode(true);
+      lights.style.opacity = '';
+      lights.style.visibility = '';
+      const cycleText = document.createElement('p');
+      cycleText.className = 'stacked-summary cycle-copy';
+      const signalText = document.createElement('p');
+      signalText.className = 'stacked-summary';
+      const secondText = '这次周期天数落在<em>21—35天的理想范围</em>内。很棒！继续保持现在的健康生活节奏就可以。';
+      const separator = document.createElement('div');
+      separator.className = 'stacked-divider';
+      separator.setAttribute('aria-hidden', 'true');
+      layout.append(cycleText, bars, separator, signalText, lights);
+      record.querySelector('.analysis-viewport').hidden = true;
+      card.append(layout);
+      const content = document.querySelector('.content');
+      const syncHeight = () => {
+        const height = layout.offsetTop + layout.offsetHeight + 12;
+        card.style.height = `${height}px`;
+        record.style.minHeight = `${card.offsetTop + height + 12}px`;
+        if (animate) content.scrollTop = Math.max(0, card.offsetTop + height + 12 - content.clientHeight);
+      };
+      // ResizeObserver runs after layout and before paint, so the outer card
+      // follows the chart's actual in-flow height without a second transition.
+      singlePageResizeObserver = new ResizeObserver(syncHeight);
+      singlePageResizeObserver.observe(layout);
+      const setLamp = (target, highlight = false) => {
+        lights.querySelectorAll('.signal-item').forEach(item => {
+          const lit = item.dataset.signal === target;
+          item.classList.toggle('is-lit', lit);
+          item.classList.toggle('is-active', lit && highlight);
+          item.querySelector('.signal-light').setAttribute('aria-label',
+            `${item.querySelector('.signal-name').textContent}，${lit ? '已点亮' : '未点亮'}`);
+        });
+      };
+      if (!animate) {
+        cycleText.innerHTML = fullSummary;
+        signalText.innerHTML = secondText;
+        setLamp('stable', true);
+        syncHeight();
+        return;
+      }
+      separator.hidden = true;
+      bars.hidden = true;
+      cycleText.hidden = true;
+      lights.hidden = true;
+      signalText.hidden = true;
+      setLamp('off');
+      card.style.transition = 'height 140ms ease';
+      const typeText = (element, html, done) => {
+        element.hidden = false;
+        const template = document.createElement('div');
+        template.innerHTML = html;
+        const tokens = Array.from(template.childNodes).flatMap(node =>
+          Array.from(node.textContent).map(character => ({ character, highlight: node.nodeType === 1 && node.tagName === 'EM' })));
+        let index = 0;
+        const next = () => {
+          const token = tokens[index++];
+          const character = document.createElement('span');
+          character.className = 'summary-char';
+          character.textContent = token.character;
+          if (token.highlight) {
+            const highlight = document.createElement('em');
+            highlight.append(character);
+            element.append(highlight);
+          } else element.append(character);
+          syncHeight();
+          if (index < tokens.length) schedule(next,
+            /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
+          else schedule(done, 180);
+        };
+        next();
+      };
+      const revealChart = chart => {
+        card.style.transition = 'none';
+        chart.hidden = false;
+        const targetHeight = `${chart.offsetHeight}px`;
+        chart.animate([
+          { opacity: 0, height: '0px', flexBasis: '0px' },
+          { opacity: 1, height: targetHeight, flexBasis: targetHeight }
+        ], { duration: 360, easing: 'ease', fill: 'both' });
+        syncHeight();
+        schedule(() => {
+          syncHeight();
+          card.style.transition = 'height 140ms ease';
+        }, 376);
+      };
+      typeText(cycleText, fullSummary, () => {
+        revealChart(bars);
+        bars.querySelectorAll('.chart-row').forEach((row, index) => {
+          const rowStart = 340 + index * 200;
+          const fade = (selector, delay, duration) => row.querySelector(selector).animate(
+            [{ opacity: 0 }, { opacity: 1 }], { delay, duration, easing: 'ease', fill: 'both' });
+          fade('.cycle-label', rowStart, 300);
+          fade('.cycle-status', rowStart + 20, 300);
+          row.querySelector('.bar').animate([
+            { opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }
+          ], { delay: rowStart + 40, duration: 400, easing: 'ease', fill: 'both' });
+          fade('.bar-value', rowStart + 180, 180);
+        });
+        schedule(() => {
+          separator.hidden = false;
+          typeText(signalText, secondText, () => {
+            revealChart(lights);
+            schedule(() => {
+              ['stable', 'mild', 'strong', 'watch'].forEach((lamp, index) =>
+                schedule(() => setLamp(lamp), 250 + index * 250));
+              schedule(() => { setLamp('stable', true); syncHeight(); }, 1250);
+            }, 360);
+          });
+        }, 1180 + 500);
+      });
+    };
     const playDemo = (mode = 1) => {
+      singlePageResizeObserver?.disconnect();
+      singlePageResizeObserver = null;
+      activeScheme = mode;
+      document.querySelector('.page').classList.toggle('scheme-one', mode === 1);
+      document.querySelector('.page').classList.toggle('scheme-three', mode === 3);
+      record.style.minHeight = '';
+      document.querySelector('.content').scrollTop = 0;
+      record.querySelector('.date strong').textContent = mode !== 2 ? '今天' : '5月20日';
+      record.querySelector('.date span').textContent = mode !== 2 ? '9月23日 周一' : '周五';
       timers.forEach(timer => window.clearTimeout(timer));
       timers = [];
       record.getAnimations({ subtree: true }).forEach(animation => animation.cancel());
       record.querySelector('.scheme-two-layout')?.remove();
+      record.querySelector('.scheme-three-layout')?.remove();
       record.querySelector('.analysis-viewport').hidden = false;
       record.hidden = false;
       cyclePage.hidden = false;
       signalPage.hidden = true;
-      signalSummary.innerHTML = fullSignalSummary;
+      signalSummary.innerHTML = mode === 1 ? schemeOneSignalText : fullSignalSummary;
+      signalSummaryTokens = Array.from(signalSummary.childNodes).flatMap(node =>
+        node.nodeType === 1 && node.tagName === 'BR'
+          ? [{ character: '\n', lineBreak: true }]
+          : Array.from(node.textContent).map(character => ({ character, highlight: node.nodeType === 1 && node.tagName === 'EM' }))
+      );
       signalChart.style.opacity = '';
+      signalChart.style.visibility = '';
+      cyclePage.querySelector('.chart').style.visibility = '';
       setActiveSignal('off');
       cyclePage.setAttribute('aria-hidden', 'false');
       signalPage.setAttribute('aria-hidden', 'true');
@@ -466,14 +676,16 @@
       paginationDots.forEach(dot => dot.setAttribute('tabindex', '-1'));
       playButton.setAttribute('aria-expanded', String(mode === 1));
       document.querySelector('.scheme-two').setAttribute('aria-expanded', String(mode === 2));
+      document.querySelector('.scheme-three-button').setAttribute('aria-expanded', String(mode === 3));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        if (mode === 3) { showSchemeThree(false); return; }
         if (mode === 2) { startSchemeTwo(true); return; }
         cyclePage.hidden = true;
         signalPage.hidden = false;
         activateSignalPage();
         setActiveSignal('stable', true);
         signalCardHeight = Math.max(card.getBoundingClientRect().height,
-          signalPage.parentElement.offsetTop + signalSummary.offsetTop + signalSummary.scrollHeight + 27);
+          analysisBottom(signalPage, signalSummary) + 27);
         card.style.height = `${signalCardHeight}px`;
         record.querySelector('.pagination').style.top = `${signalCardHeight - 20}px`;
         pagesReady = true;
@@ -498,11 +710,58 @@
       }, 550);
       schedule(() => {
         card.style.transition = 'height 360ms cubic-bezier(.22, 1, .36, 1)';
-        card.style.height = '294px';
+        if (mode !== 3) card.style.height = mode === 1 ? `${analysisBottom(cyclePage, summary) + 12}px` : '294px';
       }, 790);
       fadeIn('.time, .period', 250, 300);
       fadeIn('.divider', 550, 240);
       fadeIn('.analysis-title', 790, 400);
+      if (mode === 3) { schedule(() => showSchemeThree(), 790); return; }
+      if (mode === 1) {
+        const chart = cyclePage.querySelector('.chart');
+        chart.style.visibility = 'hidden';
+        fadeIn('.cycle-page .summary', 790, 240);
+        schedule(() => {
+          card.style.transition = 'height 140ms ease';
+          let index = 0;
+          const typeNext = () => {
+            const token = summaryTokens[index++];
+            const character = document.createElement('span');
+            character.className = 'summary-char';
+            character.textContent = token.character;
+            if (token.highlight) {
+              const highlight = document.createElement('em');
+              highlight.append(character);
+              summary.append(highlight);
+            } else summary.append(character);
+            card.style.height = `${analysisBottom(cyclePage, summary) + 12}px`;
+            if (index < summaryTokens.length) {
+              schedule(typeNext, /[，。,；：！？]/.test(token.character) ? 90 : /\s/.test(token.character) ? 18 : 28);
+            } else {
+              schedule(() => {
+                chart.style.visibility = 'visible';
+                card.style.transition = 'height 360ms cubic-bezier(.22, 1, .36, 1)';
+                card.style.height = `${analysisBottom(cyclePage, summary) + 12}px`;
+                chart.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 360, easing: 'ease', fill: 'both' });
+                chart.querySelectorAll('.chart-row').forEach((row, rowIndex) => {
+                  const rowStart = 340 + rowIndex * 200;
+                  const fade = (selector, delay, duration) => row.querySelector(selector).animate(
+                    [{ opacity: 0 }, { opacity: 1 }], { delay, duration, easing: 'ease', fill: 'both' });
+                  fade('.cycle-label', rowStart, 300);
+                  fade('.cycle-status', rowStart + 20, 300);
+                  row.querySelector('.bar').animate(
+                    [{ opacity: 0, transform: 'scaleX(0)' }, { opacity: 1, transform: 'scaleX(1)' }],
+                    { delay: rowStart + 40, duration: 400, easing: 'ease', fill: 'both' });
+                  fade('.bar-value', rowStart + 180, 180);
+                });
+                // Complete the third bar, then preserve the 500 ms page pause.
+                schedule(slideToSignalPage, 1180 + 500);
+              }, 180);
+            }
+          };
+          typeNext();
+        }, 790);
+        return;
+      }
       fadeIn('.cycle-page .chart', 790, 360);
       // Reference bar chart: 40 ms reset, 300 ms shell, then staggered rows.
       const chartShellStart = 790 + 40;
@@ -534,7 +793,7 @@
         card.style.transition = 'height 140ms ease';
         if (mode === 2) { startSchemeTwo(); return; }
         const syncTypedHeight = () => {
-          const textBottom = cyclePage.parentElement.offsetTop + summary.offsetTop + summary.scrollHeight;
+          const textBottom = analysisBottom(cyclePage, summary);
           card.style.height = `${textBottom + 12}px`;
         };
         let index = 0;
@@ -563,6 +822,7 @@
     };
     playButton.addEventListener('click', () => playDemo(1));
     document.querySelector('.scheme-two').addEventListener('click', () => playDemo(2));
+    document.querySelector('.scheme-three-button').addEventListener('click', () => playDemo(3));
     const switchAnalysisPage = target => {
       if (!pagesReady || pageSwitching || target === currentAnalysisPage) return;
       pageSwitching = true;
